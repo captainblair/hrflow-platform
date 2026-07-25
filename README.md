@@ -1,43 +1,45 @@
 # HRFlow Platform
 
-Small internal tool for employee records, leave approvals, and monthly payroll.
+Internal HR + payroll tool for small teams: employee records, leave approvals, and monthly payslips.
 
-Most teams I have seen still run this stuff on spreadsheets and WhatsApp. Requests get lost, nobody knows who is actually out, and payroll gets calculated by hand (and sometimes wrong). This project is a tighter version of that workflow with real rules behind it, not just forms that save rows.
+Day-to-day this stuff often lives in spreadsheets and WhatsApp. Approvals get lost, nobody has a clear picture of who is out, and payroll is done by hand. This repo is my attempt at a small system with real rules behind it — not just CRUD forms.
 
-## What I prioritized (and why)
+> **Status:** early stage. This README describes what I am building and the rules I intend to enforce. I will update it as the code catches up so the docs stay honest.
 
-The brief said it is better to do one or two modules properly than all three shallowly. I still built all three because they depend on each other, but I put the most effort into:
+## What I am prioritizing (and why)
 
-1. **Leave management** — this is where spreadsheets fall apart. I spent time on notice periods, overlapping requests, team coverage, and stale approvals.
-2. **Payroll math** — gross pay that respects unpaid leave and mid-month joiners, plus a simple tax + social security scheme that is easy to verify.
-3. **Employee records** — enough to support leave and payroll (including soft deactivate so history stays intact). Not a full HRIS.
+The brief said one or two modules done properly beats three done shallowly. I am still planning all three because leave and payroll need employee data, but effort will go in this order:
 
-If something looks deliberately simple on the employee side, that was intentional. I wanted the leave rules and payslip numbers to be trustworthy first.
+1. **Leave management** — this is where spreadsheets usually fail. Notice periods, overlapping requests, team coverage, and stale approvals are the parts I care about most.
+2. **Payroll math** — gross pay that respects unpaid leave and mid-month joiners, plus a simple tax + social security scheme that is easy to check by hand.
+3. **Employee records** — enough structure to support leave and payroll (including soft deactivate so history can stay). Not trying to build a full HRIS.
 
-## Features
+If the employee side looks intentionally simple later, that is on purpose. I want leave rules and payslip numbers to be trustworthy first.
+
+## Planned features
 
 ### Employee records
 - Create and update employees (name, role, team, manager, start date, salary, employment type)
 - Simple org view: who reports to whom
-- Deactivate instead of delete (payslips and leave history keep working)
+- Deactivate instead of delete (so payroll and leave history can remain)
 
 ### Leave management
-- Employees request time off
-- Managers approve or reject
-- Leave balances tracked per year
-- Unpaid leave feeds into payroll deductions
+- Request time off
+- Manager approve / reject
+- Leave balances per year
+- Unpaid leave feeding into payroll
 
-Rules I built in (problems I kept hitting when thinking through real leave):
+Problems I want the leave module to catch (and the rules I plan to use):
 
-| Problem | What I did |
+| Problem | Planned rule |
 |---|---|
-| Last-minute annual leave with no planning time | Minimum 3 calendar days notice for annual leave (sick leave is exempt) |
+| Last-minute annual leave with no planning time | Minimum 3 calendar days notice for annual leave (sick leave exempt) |
 | Someone booking overlapping dates | Block overlaps against own pending/approved leave |
-| Half the team disappearing on the same week | Soft coverage check: for teams with 2+ people, no more than ~50% of active members on leave the same day |
-| Requests sitting forever | Pending requests older than 5 business days show up as overdue / escalated on the dashboard |
+| Half the team out the same week | Soft coverage check: for teams with 2+ people, no more than ~50% of active members on leave the same day |
+| Requests sitting unanswered | Pending requests older than 5 business days flagged as overdue on the dashboard |
 | Leave not affecting pay | Unpaid leave days reduce gross pay for that month |
 
-Thresholds are documented here on purpose so reviewers know what to expect when clicking through.
+I am writing the thresholds down now so they are reviewable and testable once the module exists.
 
 ### Payroll
 - Generate a monthly payslip per active employee
@@ -45,7 +47,7 @@ Thresholds are documented here on purpose so reviewers know what to expect when 
 - Statutory deductions: flat social security + bracketed income tax
 - Net pay stored on the payslip
 
-## Architecture
+## Architecture (target)
 
 ```
 Browser (HTML / CSS / vanilla JS)
@@ -58,31 +60,31 @@ Flask API (blueprints + services)
 PostgreSQL (SQLAlchemy + Flask-Migrate)
 ```
 
-**Backend:** Flask app with an app factory. Routes stay thin. Leave rules and payroll calculations live in service modules so they are testable without going through HTTP.
+**Backend:** Flask with an app factory. Routes stay thin. Leave rules and payroll calculations live in service modules so they can be tested without HTTP.
 
-**Frontend:** Plain HTML pages, one CSS file, vanilla JS modules that call the API. No React/Vue — matching the challenge requirement.
+**Frontend:** Plain HTML, CSS, and vanilla JS calling the API. No React/Vue — matching the challenge requirement.
 
-**Database:** PostgreSQL. Main tables are employees, leave_requests, leave_balances, payroll_periods, and payslips.
+**Database:** PostgreSQL. Expected main tables: employees, leave_requests, leave_balances, payroll_periods, payslips.
 
-Docker Compose is optional. The app also runs fine with a local venv + local Postgres.
+Docker Compose will be optional. The app should also run with a local venv + local Postgres.
 
-## Business rules
+## Business rules (design)
 
 ### Leave
-- Leave types: annual, sick, unpaid (extendable later)
+- Types: annual, sick, unpaid (easy to extend later)
 - Annual leave consumes balance; unpaid does not, but it hits payroll
 - Sick leave skips the notice rule
-- Only managers (or a designated approver path via manager_id) can approve/reject for their reports
-- Rejected / cancelled requests do not affect coverage or balances
+- Approvals go through the employee’s manager (`manager_id`)
+- Rejected / cancelled requests should not affect coverage or balances
 
 ### Payroll formula
 
-This is a simplified fictional scheme. It is not meant to match a real country.
+Simplified fictional scheme — not meant to match a real country.
 
 Assumptions:
 - Pay period = calendar month
-- Monthly salary is the base figure stored on the employee
-- Working/pay days for proration use calendar days in the month (kept simple and predictable)
+- Monthly salary on the employee record is the base figure
+- Proration uses calendar days in the month (simple and predictable)
 
 **Step 1 — Gross pay**
 
@@ -93,7 +95,7 @@ eligible_days = days in month the employee was employed
 gross = monthly_salary * (eligible_days / days_in_month)
 ```
 
-Mid-month joiners only count days from `start_date` onward. Inactive employees are skipped for new runs.
+Mid-month joiners only count from `start_date` onward. Inactive employees should be skipped on new runs.
 
 **Step 2 — Social security**
 
@@ -121,100 +123,63 @@ taxable = gross - social_security
 net = gross - social_security - tax
 ```
 
-Edge cases I specifically handled in code/tests:
+Edge cases I plan to cover in tests:
 - Employee starts mid-month
-- Salary sitting right on a bracket boundary
-- Month with enough unpaid leave that gross (and therefore tax) collapses toward zero
+- Salary sitting on a bracket boundary
+- Enough unpaid leave that gross (and tax) drop near zero
 - Zero-deduction path when taxable income stays in the 0% band
 
 ## Installation
 
-### Option A — Manual (recommended for day-to-day work)
+Setup instructions will land with the project scaffolding. Expected paths:
 
-Requirements:
+### Manual
 - Python 3.11+
 - PostgreSQL 14+
-- Node is not required
+- venv + `pip install -r requirements.txt`
+- `.env` from `.env.example`
+- `flask db upgrade`, seed data, then `flask run`
 
-```bash
-# 1. Clone
-git clone <your-repo-url>
-cd hrflow-platform
+### Docker
+- `docker compose up --build` once compose files exist
 
-# 2. Backend env
-python -m venv venv
-# Windows
-venv\Scripts\activate
-# macOS / Linux
-source venv/bin/activate
+I will fill exact commands here when the app is runnable so this section does not promise steps that are not in the repo yet.
 
-pip install -r requirements.txt
-
-# 3. Database
-createdb hrflow
-# or create it in pgAdmin / psql however you usually do
-
-# 4. Environment
-cp .env.example .env
-# edit DATABASE_URL if needed
-
-# 5. Migrate + seed
-flask db upgrade
-flask seed   # or python -m scripts.seed, depending on final setup
-
-# 6. Run
-flask run
-# app should be on http://127.0.0.1:5000
-```
-
-### Option B — Docker
-
-```bash
-docker compose up --build
-```
-
-This starts Postgres + the app. See `docker-compose.yml` for ports and env defaults.
-
-After first boot you may still need to run migrations inside the container if they are not applied automatically — that will be noted in the compose setup once it is finalized.
-
-## API overview
+## API overview (planned)
 
 Base path: `/api`
 
 ### Employees
-- `GET /api/employees` — list (supports active filter)
-- `POST /api/employees` — create
-- `GET /api/employees/<id>` — detail
-- `PATCH /api/employees/<id>` — update
-- `POST /api/employees/<id>/deactivate` — soft deactivate
-- `GET /api/employees/org` — reporting tree
+- `GET /api/employees`
+- `POST /api/employees`
+- `GET /api/employees/<id>`
+- `PATCH /api/employees/<id>`
+- `POST /api/employees/<id>/deactivate`
+- `GET /api/employees/org`
 
 ### Leave
-- `GET /api/leave` — list requests (filters: status, employee, overdue)
-- `POST /api/leave` — submit request
+- `GET /api/leave`
+- `POST /api/leave`
 - `POST /api/leave/<id>/approve`
 - `POST /api/leave/<id>/reject`
 - `GET /api/leave/balances/<employee_id>`
-- `GET /api/leave/coverage?date=YYYY-MM-DD&team=...` — coverage helper used by rules/UI
+- `GET /api/leave/coverage`
 
 ### Payroll
-- `POST /api/payroll/generate` — body: `{ "year": 2026, "month": 7 }`
+- `POST /api/payroll/generate`
 - `GET /api/payroll/periods`
 - `GET /api/payroll/periods/<id>/payslips`
 - `GET /api/payroll/payslips/<id>`
 
 ### Dashboard
-- `GET /api/dashboard` — pending approvals, people currently out, balances snapshot, recent payslips
+- `GET /api/dashboard`
 
-Exact request/response shapes live with the route handlers and will stay consistent with what the frontend sends.
+Shapes will match whatever the frontend ends up sending. I will keep this list in sync as routes are added.
 
 ## Testing
 
-```bash
-pytest
-```
+Plan: `pytest`, focused on core logic rather than chasing full line coverage.
 
-Focus is on core logic, not chasing 100% line coverage:
 - Leave notice validation
 - Overlap detection
 - Team coverage rule
@@ -223,30 +188,21 @@ Focus is on core logic, not chasing 100% line coverage:
 - Tax brackets and social security
 - Bracket-boundary and near-zero gross cases
 
-UI and thin route wiring are mostly checked manually.
-
 ## Sample data / SQL dump
 
-Submission includes a SQL dump with:
-- A few employees across teams with managers set
-- Leave requests in different statuses
-- At least one generated payroll period with payslips
+For the final submission I will include a SQL dump with a few employees/teams, leave requests in different statuses, and at least one generated payroll period.
 
-Path (once generated): `database/hrflow_sample.sql`
+Expected path once ready: `database/hrflow_sample.sql`
 
 ## What I would improve with more time
 
-- Proper auth (login, roles). Right now the API is open for demo/local use.
-- Email / in-app notifications when a request goes overdue
-- More realistic leave accrual (pro-rata by start date, carry-over rules)
-- Export payslips to PDF
-- Audit log for approve/reject and payroll finalization
-- Better calendar UI for team leave
+- Auth (login / roles) — API will start open for local demo use
+- Notifications when a request goes overdue
+- More realistic leave accrual and carry-over
+- PDF payslip export
+- Audit log for approvals and payroll runs
+- Better team leave calendar UI
 
-## Stretch ideas (only if core stays solid)
+## Stretch goals
 
-I may add one small quality-of-life thing if time allows (for example a clearer overdue badge on the dashboard, or a one-click "who's out this week" filter). Anything stretch gets called out here so it is obvious what was extra vs core.
-
----
-
-Built as a practical exercise for an internal HR + payroll workflow. If something in this README drifts from the code, trust the code and open an issue / note — I tried to keep both aligned.
+Only after the core modules work. Possible extras: clearer overdue indicators on the dashboard, or a quick “who’s out this week” filter. Anything stretch will be called out here so it is obvious what was extra.
