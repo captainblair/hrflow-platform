@@ -8,10 +8,10 @@ Teams often handle this over spreadsheets and chat. Requests get lost, coverage 
 
 Currently under active development as part of a Software Engineering practical assessment.
 
-**In place**
+**Defined**
 - Project architecture
 - Database planning
-- Core business workflows (documented)
+- Core business workflows
 
 **Upcoming**
 - Backend implementation
@@ -38,7 +38,7 @@ Currently under active development as part of a Software Engineering practical a
 - Pytest
 
 **DevOps**
-- Docker (optional)
+- Docker (optional local deployment)
 
 ## Focus
 
@@ -82,17 +82,23 @@ Rules:
 ## Architecture
 
 ```
-Browser (HTML, CSS, vanilla JS)
-        |
-        |  REST / JSON
-        v
-Flask API (routes + services)
-        |
-        v
-PostgreSQL (SQLAlchemy, Flask-Migrate)
+Browser (HTML, CSS, Vanilla JS)
+              |
+              | REST / JSON
+              v
+Flask API
+(routes/controllers)
+              |
+              v
+Business Services
+(leave rules + payroll calculations)
+              |
+              v
+PostgreSQL
+(SQLAlchemy + Flask-Migrate)
 ```
 
-Backend keeps route handlers thin and puts leave/payroll logic in services so the important rules are easy to test.
+Route handlers stay thin. Leave rules and payroll calculations live in a service layer so the important logic is easy to test.
 
 Frontend is plain HTML/CSS/JS — no React or Vue.
 
@@ -232,5 +238,7 @@ Screenshots of the dashboard, leave workflow, and payroll views will be added he
 - PDF payslips
 - Audit trail for approvals and payroll runs
 - Team leave calendar
+- CI/CD pipeline integration
+- Cloud deployment configuration
 
 Stretch work only after the core modules are solid. Extra quality-of-life features (for example clearer overdue indicators) will be listed here if added.
