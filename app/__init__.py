@@ -14,6 +14,12 @@ def create_app(config=None):
 
     db.init_app(app)
     migrate.init_app(app, db)
+
+    # Imported so Alembic sees every table when generating migrations.
+    from app import models  # noqa: F401
+    from app.seed import seed_command
+
     register_blueprints(app)
+    app.cli.add_command(seed_command)
 
     return app

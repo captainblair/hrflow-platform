@@ -11,16 +11,16 @@ Currently under active development as part of a Software Engineering practical a
 **Implemented**
 - Flask application factory
 - Environment-based configuration
-- Database extension and migration setup
+- Database models (employees, leave, payroll)
+- Initial Alembic migration
+- Seed command with sample data
 - API health endpoint
 
 **Defined**
 - Project architecture
-- Database planning
 - Core business workflows
 
 **Upcoming**
-- Database models and migrations
 - Employee, leave, and payroll modules
 - Frontend dashboard
 - Testing
@@ -199,7 +199,22 @@ cp .env.example .env
 
 On Windows PowerShell, use `Copy-Item .env.example .env` instead of `cp`.
 
-Update `DATABASE_URL` in `.env` if the local PostgreSQL credentials differ, then start the development server:
+Update `DATABASE_URL` in `.env` with local PostgreSQL credentials. If the password contains special characters such as `@`, URL-encode them (for example `@` becomes `%40`).
+
+Create the database once:
+
+```sql
+CREATE DATABASE hrflow;
+```
+
+Apply migrations and load sample data:
+
+```bash
+flask db upgrade
+flask seed
+```
+
+Start the development server:
 
 ```bash
 python run.py
