@@ -3,6 +3,7 @@ from flask import Flask
 from app.config import Config
 from app.extensions import db, migrate
 from app.routes import register_blueprints
+from app.utils.errors import register_error_handlers
 
 
 def create_app(config=None):
@@ -20,6 +21,7 @@ def create_app(config=None):
     from app.seed import seed_command
 
     register_blueprints(app)
+    register_error_handlers(app)
     app.cli.add_command(seed_command)
 
     return app

@@ -15,13 +15,14 @@ Currently under active development as part of a Software Engineering practical a
 - Initial Alembic migration
 - Seed command with sample data
 - API health endpoint
+- Employee records API (CRUD, deactivate, org tree)
 
 **Defined**
 - Project architecture
 - Core business workflows
 
 **Upcoming**
-- Employee, leave, and payroll modules
+- Leave and payroll modules
 - Frontend dashboard
 - Testing
 - Docker setup
