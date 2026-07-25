@@ -8,13 +8,20 @@ Teams often handle this over spreadsheets and chat. Requests get lost, coverage 
 
 Currently under active development as part of a Software Engineering practical assessment.
 
+**Implemented**
+- Flask application factory
+- Environment-based configuration
+- Database extension and migration setup
+- API health endpoint
+
 **Defined**
 - Project architecture
 - Database planning
 - Core business workflows
 
 **Upcoming**
-- Backend implementation
+- Database models and migrations
+- Employee, leave, and payroll modules
 - Frontend dashboard
 - Testing
 - Docker setup
@@ -166,18 +173,42 @@ Cases covered in tests:
 
 ## Setup
 
-Setup commands will be added once the project scaffolding is in place. Expected flow:
-
 ### Manual
-1. Python 3.11+ and PostgreSQL 14+
-2. Create a virtualenv and install `requirements.txt`
-3. Copy `.env.example` to `.env` and set `DATABASE_URL`
-4. Run migrations, seed sample data, start the app with Flask
+Requirements: Python 3.11+ and PostgreSQL 14+.
+
+```bash
+python -m venv .venv
+```
+
+Activate the environment:
+
+```bash
+# Windows PowerShell
+.\.venv\Scripts\Activate.ps1
+
+# macOS / Linux
+source .venv/bin/activate
+```
+
+Install dependencies and create the local environment file:
+
+```bash
+pip install -r requirements.txt
+cp .env.example .env
+```
+
+On Windows PowerShell, use `Copy-Item .env.example .env` instead of `cp`.
+
+Update `DATABASE_URL` in `.env` if the local PostgreSQL credentials differ, then start the development server:
+
+```bash
+python run.py
+```
+
+The API health check is available at `http://127.0.0.1:5000/api/health`.
 
 ### Docker
-```bash
-docker compose up --build
-```
+Docker support is planned for a later phase.
 
 ## Planned API Structure
 
