@@ -16,13 +16,15 @@ Currently under active development as part of a Software Engineering practical a
 - Seed command with sample data
 - API health endpoint
 - Employee records API (CRUD, deactivate, org tree)
+- Leave management API (request, approve/reject, balances)
 
 **Defined**
 - Project architecture
 - Core business workflows
 
 **Upcoming**
-- Leave and payroll modules
+- Leave business rules (notice, overlaps, coverage, overdue)
+- Payroll modules
 - Frontend dashboard
 - Testing
 - Docker setup
