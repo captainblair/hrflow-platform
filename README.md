@@ -1,12 +1,48 @@
 # HRFlow Platform
 
-A small internal tool for employee records, leave approvals, and monthly payroll.
+An internal HR and Payroll management platform for employee records, leave approvals, and monthly payslips.
 
-Teams often handle this over spreadsheets and chat. Requests get lost, coverage is unclear, and payroll is calculated by hand. HRFlow keeps those workflows in one place with rules that actually matter — notice periods, team coverage, and payslip math you can verify.
+Teams often handle this over spreadsheets and chat. Requests get lost, coverage is unclear, and payroll is calculated by hand. HRFlow keeps those workflows in one place with enforceable rules — notice periods, team coverage, and payslip math that can be verified.
+
+## Project Status
+
+Currently under active development as part of a Software Engineering practical assessment.
+
+**In place**
+- Project architecture
+- Database planning
+- Core business workflows (documented)
+
+**Upcoming**
+- Backend implementation
+- Frontend dashboard
+- Testing
+- Docker setup
+
+## Tech Stack
+
+**Backend**
+- Flask
+- SQLAlchemy
+- Flask-Migrate
+
+**Database**
+- PostgreSQL
+
+**Frontend**
+- HTML
+- CSS
+- Vanilla JavaScript
+
+**Testing**
+- Pytest
+
+**DevOps**
+- Docker (optional)
 
 ## Focus
 
-I am building all three modules because they depend on each other, but the depth goes here first:
+HRFlow implements all three modules because they depend on each other operationally. Development prioritizes business-critical workflows first:
 
 1. **Leave** — approvals, balances, and safeguards (short notice, overlaps, under-covered teams, stalled requests)
 2. **Payroll** — monthly payslips with proration, unpaid leave deductions, and a simple tax + social security scheme
@@ -124,7 +160,7 @@ Cases covered in tests:
 
 ## Setup
 
-Exact commands will be filled in once the project scaffolding is in place. Expected flow:
+Setup commands will be added once the project scaffolding is in place. Expected flow:
 
 ### Manual
 1. Python 3.11+ and PostgreSQL 14+
@@ -137,7 +173,7 @@ Exact commands will be filled in once the project scaffolding is in place. Expec
 docker compose up --build
 ```
 
-## API
+## Planned API Structure
 
 Base path: `/api`
 
@@ -182,7 +218,11 @@ Coverage targets the core logic:
 
 ## Sample data
 
-Final submission will include a SQL dump under `database/hrflow_sample.sql` with a few employees, leave requests in different statuses, and one generated payroll period.
+The final submission includes a SQL dump under `database/hrflow_sample.sql` with a few employees, leave requests in different statuses, and one generated payroll period.
+
+## Screenshots
+
+Screenshots of the dashboard, leave workflow, and payroll views will be added here once the frontend is in place.
 
 ## Later improvements
 
@@ -193,4 +233,4 @@ Final submission will include a SQL dump under `database/hrflow_sample.sql` with
 - Audit trail for approvals and payroll runs
 - Team leave calendar
 
-Stretch work only after the core modules are solid. If I add anything extra (for example clearer overdue indicators), it will be listed here.
+Stretch work only after the core modules are solid. Extra quality-of-life features (for example clearer overdue indicators) will be listed here if added.
