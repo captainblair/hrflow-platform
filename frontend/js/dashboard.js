@@ -12,8 +12,7 @@ function renderLeaveList(items, emptyTitle, emptyBody) {
           <div class="meta">${item.leave_type} · ${formatDate(item.start_date)} → ${formatDate(item.end_date)}</div>
         </div>
         <div>
-          ${statusBadge(item.status)}
-          ${item.is_overdue ? '<span class="badge warning">Overdue</span>' : ""}
+          ${leaveStatusBadges(item)}
         </div>
       </div>`
     )

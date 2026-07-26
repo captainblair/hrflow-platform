@@ -24,13 +24,14 @@ Currently under active development as part of a Software Engineering practical a
 - Frontend shell (pages, shared styles, API client)
 - Dashboard API and live dashboard UI
 - Employee management UI (create, edit, deactivate, org view)
+- Leave workflow UI (request, approve/reject, overdue filters)
 
 **Defined**
 - Project architecture
 - Core business workflows
 
 **Upcoming**
-- Leave and payroll UI
+- Payroll UI
 - Docker setup
 
 ## Tech Stack

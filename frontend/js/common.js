@@ -24,6 +24,22 @@ function statusBadge(status) {
   return `<span class="badge ${cls}">${status || "—"}</span>`;
 }
 
+function todayISO() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function leaveStatusBadges(item) {
+  const parts = [statusBadge(item.status)];
+  if (item.is_overdue) {
+    parts.push('<span class="badge warning">Overdue</span>');
+  }
+  // Keep approved history, but mark finished ranges so they don't look current.
+  if (item.end_date && item.end_date < todayISO()) {
+    parts.push('<span class="badge inactive">Past</span>');
+  }
+  return parts.join(" ");
+}
+
 function formatMoney(value) {
   const amount = Number(value || 0);
   return amount.toLocaleString(undefined, {

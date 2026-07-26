@@ -46,53 +46,54 @@
             <div>
               <h1>Leave</h1>
               <p>
-                Track requests, spot overdue items, and keep team coverage under
-                control.
+                Submit requests and decide them as a manager. Notice, overlap,
+                coverage, and balance rules are enforced by the API.
               </p>
             </div>
           </div>
 
           <div id="leave-error" class="flash error" hidden></div>
+          <div id="leave-ok" class="flash ok" hidden></div>
 
           <section class="grid grid-2">
             <article class="card">
               <div class="card-header">
                 <h2>Request leave</h2>
-                <span class="badge">Form preview</span>
+                <span class="badge info" id="balance-badge">Balance —</span>
               </div>
-              <form class="form-grid" id="leave-form" onsubmit="return false;">
+              <form class="form-grid" id="leave-form">
                 <div class="form-row">
                   <div class="field">
                     <label for="leave-employee">Employee</label>
-                    <select id="leave-employee" disabled>
-                      <option>Select employee</option>
+                    <select id="leave-employee" required>
+                      <option value="">Select employee</option>
                     </select>
                   </div>
                   <div class="field">
                     <label for="leave-type">Type</label>
-                    <select id="leave-type" disabled>
-                      <option>annual</option>
-                      <option>sick</option>
-                      <option>unpaid</option>
+                    <select id="leave-type" required>
+                      <option value="annual">annual</option>
+                      <option value="sick">sick</option>
+                      <option value="unpaid">unpaid</option>
                     </select>
                   </div>
                 </div>
                 <div class="form-row">
                   <div class="field">
                     <label for="leave-start">Start date</label>
-                    <input id="leave-start" type="date" disabled />
+                    <input id="leave-start" type="date" required />
                   </div>
                   <div class="field">
                     <label for="leave-end">End date</label>
-                    <input id="leave-end" type="date" disabled />
+                    <input id="leave-end" type="date" required />
                   </div>
                 </div>
                 <div class="field">
                   <label for="leave-reason">Reason</label>
-                  <textarea id="leave-reason" disabled placeholder="Optional note"></textarea>
+                  <textarea id="leave-reason" placeholder="Optional note"></textarea>
                 </div>
                 <div>
-                  <button class="btn" type="button" disabled>Submit request</button>
+                  <button class="btn" type="submit">Submit request</button>
                 </div>
               </form>
             </article>
@@ -101,7 +102,7 @@
               <div class="card-header">
                 <h2>Request queue</h2>
                 <div>
-                  <button class="btn ghost btn-sm" data-filter="all" type="button">All</button>
+                  <button class="btn secondary btn-sm" data-filter="all" type="button">All</button>
                   <button class="btn ghost btn-sm" data-filter="pending" type="button">Pending</button>
                   <button class="btn ghost btn-sm" data-filter="overdue" type="button">Overdue</button>
                 </div>
@@ -110,6 +111,27 @@
             </article>
           </section>
         </main>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="decide-modal" aria-hidden="true">
+      <div class="modal" role="dialog" aria-labelledby="decide-title">
+        <h3 id="decide-title">Decide leave request</h3>
+        <p id="decide-summary">Select the employee’s manager to approve or reject.</p>
+        <form class="form-grid" id="decide-form">
+          <input type="hidden" id="decide-leave-id" />
+          <input type="hidden" id="decide-action" />
+          <div class="field">
+            <label for="decide-approver">Approver (manager)</label>
+            <select id="decide-approver" required>
+              <option value="">Select manager</option>
+            </select>
+          </div>
+          <div class="modal-actions">
+            <button class="btn ghost" type="button" id="decide-cancel">Cancel</button>
+            <button class="btn" type="submit" id="decide-confirm">Confirm</button>
+          </div>
+        </form>
       </div>
     </div>
 
