@@ -116,6 +116,12 @@ Frontend is plain HTML/CSS/JS — no React or Vue.
 
 Docker is optional. Local run with a virtualenv and PostgreSQL is the default path.
 
+## Access model
+
+Authentication and role-based authorization were intentionally left out of the core implementation because they were outside the main focus of this assessment. The current interface demonstrates the complete HR workflow in a single application — employees requesting leave, managers deciding requests, and payroll generation side by side.
+
+In a production deployment, employees, managers, and HR administrators would have role-based permissions exposing only the features relevant to their responsibilities.
+
 ## Leave rules
 
 - Types: annual, sick, unpaid
@@ -292,7 +298,7 @@ Screenshots of the dashboard, leave workflow, and payroll views will be added he
 
 ## Later improvements
 
-- Authentication and roles
+- Authentication and role-based permissions (see Access model above)
 - Notifications for overdue leave requests
 - Proper accrual and carry-over for annual leave
 - PDF payslips
