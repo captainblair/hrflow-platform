@@ -21,7 +21,7 @@ def _parse_start_date(value):
 def _validate_manager(manager_id, employee_id=None):
     if manager_id is None:
         return None
-    manager = Employee.query.get(manager_id)
+    manager = db.session.get(Employee, manager_id)
     if manager is None:
         raise ApiError("Manager not found", status_code=404)
     if employee_id is not None and manager_id == employee_id:
@@ -39,7 +39,7 @@ def list_employees(active=None, team=None):
 
 
 def get_employee(employee_id):
-    employee = Employee.query.get(employee_id)
+    employee = db.session.get(Employee, employee_id)
     if employee is None:
         raise ApiError("Employee not found", status_code=404)
     return employee

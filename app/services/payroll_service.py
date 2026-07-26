@@ -26,7 +26,7 @@ def preview_employee_payslip(employee_id, year, month):
     if month < 1 or month > 12:
         raise ApiError("month must be between 1 and 12")
 
-    employee = Employee.query.get(employee_id)
+    employee = db.session.get(Employee, employee_id)
     if employee is None:
         raise ApiError("Employee not found", status_code=404)
     if not employee.is_active:
@@ -106,7 +106,7 @@ def generate_payroll(year, month):
 
 
 def finalize_period(period_id):
-    period = PayrollPeriod.query.get(period_id)
+    period = db.session.get(PayrollPeriod, period_id)
     if period is None:
         raise ApiError("Payroll period not found", status_code=404)
     if period.status == "finalized":
@@ -123,7 +123,7 @@ def list_periods():
 
 
 def get_period(period_id):
-    period = PayrollPeriod.query.get(period_id)
+    period = db.session.get(PayrollPeriod, period_id)
     if period is None:
         raise ApiError("Payroll period not found", status_code=404)
     return period
@@ -139,7 +139,7 @@ def list_payslips_for_period(period_id):
 
 
 def get_payslip(payslip_id):
-    payslip = Payslip.query.get(payslip_id)
+    payslip = db.session.get(Payslip, payslip_id)
     if payslip is None:
         raise ApiError("Payslip not found", status_code=404)
     return payslip

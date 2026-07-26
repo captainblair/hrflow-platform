@@ -20,6 +20,7 @@ Currently under active development as part of a Software Engineering practical a
 - Leave business rules (notice, overlaps, coverage, overdue)
 - Payroll calculation engine (proration, tax, social security)
 - Payslip generation and payroll periods
+- Backend tests for core leave and payroll logic
 
 **Defined**
 - Project architecture
@@ -27,7 +28,6 @@ Currently under active development as part of a Software Engineering practical a
 
 **Upcoming**
 - Frontend dashboard
-- Testing
 - Docker setup
 
 ## Tech Stack
@@ -262,17 +262,22 @@ Base path: `/api`
 
 ## Tests
 
+Install development dependencies, then run the suite:
+
 ```bash
+pip install -r requirements-dev.txt
 pytest
 ```
 
-Coverage targets the core logic:
+The current suite contains 25 tests covering:
 - Notice period
 - Overlaps
 - Team coverage
 - Overdue requests
+- Manager approval and annual balance deductions
 - Payroll proration
 - Tax and social security, including edge cases
+- Payroll generation, draft regeneration, and finalization
 
 ## Sample data
 

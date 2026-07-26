@@ -40,12 +40,16 @@ def employed_days_in_month(start_date, year, month):
     return (month_end - employed_from).days + 1
 
 
-def unpaid_leave_days_in_month(leave_ranges, year, month):
-    """Sum approved unpaid leave days that fall inside the pay month."""
+def unpaid_leave_days_in_month(leave_ranges, year, month, employment_start=None):
+    """Sum approved unpaid leave days inside the employee's paid window."""
     month_start, month_end = month_bounds(year, month)
+    window_start = max(month_start, employment_start) if employment_start else month_start
+    if window_start > month_end:
+        return 0
+
     total = 0
     for leave_start, leave_end in leave_ranges:
-        total += count_overlap_days(leave_start, leave_end, month_start, month_end)
+        total += count_overlap_days(leave_start, leave_end, window_start, month_end)
     return total
 
 
@@ -83,8 +87,9 @@ def calculate_payslip(monthly_salary, start_date, year, month, unpaid_ranges=Non
     unpaid_ranges = unpaid_ranges or []
     period_days = days_in_month(year, month)
     employed = employed_days_in_month(start_date, year, month)
-    unpaid = unpaid_leave_days_in_month(unpaid_ranges, year, month)
-    # Unpaid days only count while the person was employed that month.
+    unpaid = unpaid_leave_days_in_month(
+        unpaid_ranges, year, month, employment_start=start_date
+    )
     unpaid = min(unpaid, employed)
     eligible = max(employed - unpaid, 0)
 

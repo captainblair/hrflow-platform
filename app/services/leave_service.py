@@ -49,7 +49,7 @@ def list_leave_requests(status=None, employee_id=None, overdue_only=False):
 
 
 def get_leave_request(leave_id):
-    leave = LeaveRequest.query.get(leave_id)
+    leave = db.session.get(LeaveRequest, leave_id)
     if leave is None:
         raise ApiError("Leave request not found", status_code=404)
     return leave
@@ -61,7 +61,7 @@ def submit_leave(data):
     if missing:
         raise ApiError(f"Missing required fields: {', '.join(missing)}")
 
-    employee = Employee.query.get(data["employee_id"])
+    employee = db.session.get(Employee, data["employee_id"])
     if employee is None:
         raise ApiError("Employee not found", status_code=404)
     if not employee.is_active:
@@ -105,7 +105,7 @@ def _resolve_approver(leave, data):
     if approver_id is None:
         raise ApiError("approver_id is required")
 
-    approver = Employee.query.get(approver_id)
+    approver = db.session.get(Employee, approver_id)
     if approver is None:
         raise ApiError("Approver not found", status_code=404)
     if not approver.is_active:
@@ -142,7 +142,7 @@ def approve_leave(leave_id, data):
         balance.annual_used += days
 
     leave.status = "approved"
-    leave.decided_at = datetime.utcnow()
+    leave.decided_at = datetime.now()
     leave.decided_by = approver.id
     db.session.commit()
     return leave
@@ -154,14 +154,14 @@ def reject_leave(leave_id, data):
     approver = _resolve_approver(leave, data)
 
     leave.status = "rejected"
-    leave.decided_at = datetime.utcnow()
+    leave.decided_at = datetime.now()
     leave.decided_by = approver.id
     db.session.commit()
     return leave
 
 
 def get_balance(employee_id, year=None):
-    employee = Employee.query.get(employee_id)
+    employee = db.session.get(Employee, employee_id)
     if employee is None:
         raise ApiError("Employee not found", status_code=404)
     year = year or date.today().year
