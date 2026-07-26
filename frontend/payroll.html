@@ -35,7 +35,7 @@
           <div class="topbar-actions">
             <label class="search">
               <span aria-hidden="true">⌕</span>
-              <input type="search" placeholder="Search payslips..." disabled />
+              <input id="payslip-search" type="search" placeholder="Filter payslips by name..." />
             </label>
             <div class="avatar">HR</div>
           </div>
@@ -45,34 +45,35 @@
           <div class="page-header">
             <div>
               <h1>Payroll</h1>
-              <p>Review generated periods and inspect payslip breakdowns.</p>
+              <p>
+                Generate a monthly run, inspect payslips, then finalize when the
+                numbers are locked.
+              </p>
             </div>
           </div>
 
           <div id="payroll-error" class="flash error" hidden></div>
+          <div id="payroll-ok" class="flash ok" hidden></div>
 
           <section class="grid grid-2">
             <article class="card">
               <div class="card-header">
                 <h2>Generate payroll</h2>
-                <span class="badge">Form preview</span>
+                <span class="badge info">Draft can be regenerated</span>
               </div>
-              <form class="form-grid" onsubmit="return false;">
+              <form class="form-grid" id="generate-form">
                 <div class="form-row">
                   <div class="field">
                     <label for="pay-year">Year</label>
-                    <input id="pay-year" type="number" value="2026" disabled />
+                    <input id="pay-year" type="number" min="2000" max="2100" required />
                   </div>
                   <div class="field">
                     <label for="pay-month">Month</label>
-                    <select id="pay-month" disabled>
-                      <option>7</option>
-                    </select>
+                    <select id="pay-month" required></select>
                   </div>
                 </div>
                 <div>
-                  <button class="btn" type="button" disabled>Generate period</button>
-                  <button class="btn secondary" type="button" disabled>Finalize</button>
+                  <button class="btn" type="submit">Generate period</button>
                 </div>
               </form>
             </article>
