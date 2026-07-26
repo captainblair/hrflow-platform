@@ -21,13 +21,14 @@ Currently under active development as part of a Software Engineering practical a
 - Payroll calculation engine (proration, tax, social security)
 - Payslip generation and payroll periods
 - Backend tests for core leave and payroll logic
+- Frontend shell (pages, shared styles, API client)
 
 **Defined**
 - Project architecture
 - Core business workflows
 
 **Upcoming**
-- Frontend dashboard
+- Dashboard, employee, leave, and payroll UI
 - Docker setup
 
 ## Tech Stack
@@ -223,6 +224,8 @@ Start the development server:
 ```bash
 python run.py
 ```
+
+The app UI is available at `http://127.0.0.1:5000/`.
 
 The API health check is available at `http://127.0.0.1:5000/api/health`.
 

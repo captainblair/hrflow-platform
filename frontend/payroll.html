@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HRFlow — Payroll</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-logo">HR</div>
+          <div class="brand-text">
+            <strong>HRFlow</strong>
+            <span>People &amp; Payroll</span>
+          </div>
+        </div>
+        <nav class="nav">
+          <div class="nav-section">Workspace</div>
+          <a href="/"><span class="nav-icon">▣</span> Dashboard</a>
+          <a href="/employees"><span class="nav-icon">☰</span> Employees</a>
+          <a href="/leave"><span class="nav-icon">◷</span> Leave</a>
+          <a href="/payroll"><span class="nav-icon">₤</span> Payroll</a>
+          <div class="nav-section">System</div>
+          <span class="nav-disabled"><span class="nav-icon">▥</span> Reports</span>
+          <span class="nav-disabled"><span class="nav-icon">⚙</span> Settings</span>
+        </nav>
+        <div class="sidebar-footer">Internal HR platform</div>
+      </aside>
+
+      <div class="main">
+        <header class="topbar">
+          <div class="topbar-welcome">Payroll <span>· Periods &amp; payslips</span></div>
+          <div class="topbar-actions">
+            <label class="search">
+              <span aria-hidden="true">⌕</span>
+              <input type="search" placeholder="Search payslips..." disabled />
+            </label>
+            <div class="avatar">HR</div>
+          </div>
+        </header>
+
+        <main class="page">
+          <div class="page-header">
+            <div>
+              <h1>Payroll</h1>
+              <p>Review generated periods and inspect payslip breakdowns.</p>
+            </div>
+          </div>
+
+          <div id="payroll-error" class="flash error" hidden></div>
+
+          <section class="grid grid-2">
+            <article class="card">
+              <div class="card-header">
+                <h2>Generate payroll</h2>
+                <span class="badge">Form preview</span>
+              </div>
+              <form class="form-grid" onsubmit="return false;">
+                <div class="form-row">
+                  <div class="field">
+                    <label for="pay-year">Year</label>
+                    <input id="pay-year" type="number" value="2026" disabled />
+                  </div>
+                  <div class="field">
+                    <label for="pay-month">Month</label>
+                    <select id="pay-month" disabled>
+                      <option>7</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <button class="btn" type="button" disabled>Generate period</button>
+                  <button class="btn secondary" type="button" disabled>Finalize</button>
+                </div>
+              </form>
+            </article>
+
+            <article class="card">
+              <div class="card-header">
+                <h2>Payroll periods</h2>
+              </div>
+              <div id="period-table" class="loading">Loading periods…</div>
+            </article>
+          </section>
+
+          <section class="card" style="margin-top: 1rem">
+            <div class="card-header">
+              <h2>Payslips</h2>
+              <span class="badge info" id="payslip-period-label">Select a period</span>
+            </div>
+            <div id="payslip-table" class="empty">
+              <strong>No period selected</strong>
+              Choose a payroll run to inspect payslips.
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/common.js"></script>
+    <script src="/js/payroll-page.js"></script>
+  </body>
+</html>

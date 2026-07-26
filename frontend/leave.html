@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HRFlow — Leave</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-logo">HR</div>
+          <div class="brand-text">
+            <strong>HRFlow</strong>
+            <span>People &amp; Payroll</span>
+          </div>
+        </div>
+        <nav class="nav">
+          <div class="nav-section">Workspace</div>
+          <a href="/"><span class="nav-icon">▣</span> Dashboard</a>
+          <a href="/employees"><span class="nav-icon">☰</span> Employees</a>
+          <a href="/leave"><span class="nav-icon">◷</span> Leave</a>
+          <a href="/payroll"><span class="nav-icon">₤</span> Payroll</a>
+          <div class="nav-section">System</div>
+          <span class="nav-disabled"><span class="nav-icon">▥</span> Reports</span>
+          <span class="nav-disabled"><span class="nav-icon">⚙</span> Settings</span>
+        </nav>
+        <div class="sidebar-footer">Internal HR platform</div>
+      </aside>
+
+      <div class="main">
+        <header class="topbar">
+          <div class="topbar-welcome">Leave <span>· Requests &amp; approvals</span></div>
+          <div class="topbar-actions">
+            <label class="search">
+              <span aria-hidden="true">⌕</span>
+              <input id="leave-search" type="search" placeholder="Filter by employee..." />
+            </label>
+            <div class="avatar">HR</div>
+          </div>
+        </header>
+
+        <main class="page">
+          <div class="page-header">
+            <div>
+              <h1>Leave</h1>
+              <p>
+                Track requests, spot overdue items, and keep team coverage under
+                control.
+              </p>
+            </div>
+          </div>
+
+          <div id="leave-error" class="flash error" hidden></div>
+
+          <section class="grid grid-2">
+            <article class="card">
+              <div class="card-header">
+                <h2>Request leave</h2>
+                <span class="badge">Form preview</span>
+              </div>
+              <form class="form-grid" id="leave-form" onsubmit="return false;">
+                <div class="form-row">
+                  <div class="field">
+                    <label for="leave-employee">Employee</label>
+                    <select id="leave-employee" disabled>
+                      <option>Select employee</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="leave-type">Type</label>
+                    <select id="leave-type" disabled>
+                      <option>annual</option>
+                      <option>sick</option>
+                      <option>unpaid</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="field">
+                    <label for="leave-start">Start date</label>
+                    <input id="leave-start" type="date" disabled />
+                  </div>
+                  <div class="field">
+                    <label for="leave-end">End date</label>
+                    <input id="leave-end" type="date" disabled />
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="leave-reason">Reason</label>
+                  <textarea id="leave-reason" disabled placeholder="Optional note"></textarea>
+                </div>
+                <div>
+                  <button class="btn" type="button" disabled>Submit request</button>
+                </div>
+              </form>
+            </article>
+
+            <article class="card">
+              <div class="card-header">
+                <h2>Request queue</h2>
+                <div>
+                  <button class="btn ghost btn-sm" data-filter="all" type="button">All</button>
+                  <button class="btn ghost btn-sm" data-filter="pending" type="button">Pending</button>
+                  <button class="btn ghost btn-sm" data-filter="overdue" type="button">Overdue</button>
+                </div>
+              </div>
+              <div id="leave-table" class="loading">Loading leave requests…</div>
+            </article>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/common.js"></script>
+    <script src="/js/leave.js"></script>
+  </body>
+</html>

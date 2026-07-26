@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HRFlow — Dashboard</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-logo">HR</div>
+          <div class="brand-text">
+            <strong>HRFlow</strong>
+            <span>People &amp; Payroll</span>
+          </div>
+        </div>
+
+        <nav class="nav">
+          <div class="nav-section">Workspace</div>
+          <a href="/"><span class="nav-icon">▣</span> Dashboard</a>
+          <a href="/employees"><span class="nav-icon">☰</span> Employees</a>
+          <a href="/leave"><span class="nav-icon">◷</span> Leave</a>
+          <a href="/payroll"><span class="nav-icon">₤</span> Payroll</a>
+          <div class="nav-section">System</div>
+          <span class="nav-disabled"><span class="nav-icon">▥</span> Reports</span>
+          <span class="nav-disabled"><span class="nav-icon">⚙</span> Settings</span>
+        </nav>
+
+        <div class="sidebar-footer">Internal HR platform</div>
+      </aside>
+
+      <div class="main">
+        <header class="topbar">
+          <div class="topbar-welcome">
+            Welcome back <span>· HR Operations</span>
+          </div>
+          <div class="topbar-actions">
+            <label class="search">
+              <span aria-hidden="true">⌕</span>
+              <input type="search" placeholder="Search people or leave..." disabled />
+            </label>
+            <div class="avatar" title="Profile">HR</div>
+          </div>
+        </header>
+
+        <main class="page">
+          <div class="page-header">
+            <div>
+              <h1>Dashboard</h1>
+              <p>
+                A quick view of headcount, leave pressure, and the latest payroll
+                run.
+              </p>
+            </div>
+            <div class="page-actions">
+              <a class="btn secondary" href="/leave">Review leave</a>
+              <a class="btn" href="/payroll">Open payroll</a>
+            </div>
+          </div>
+
+          <div id="dashboard-error" class="flash error" hidden></div>
+
+          <section class="grid grid-4" id="kpi-row">
+            <article class="card kpi">
+              <div class="kpi-label">
+                Total Employees
+                <span class="kpi-icon">☰</span>
+              </div>
+              <div class="kpi-value" id="kpi-employees">—</div>
+              <div class="kpi-meta" id="kpi-employees-meta">Loading…</div>
+            </article>
+            <article class="card kpi">
+              <div class="kpi-label">
+                Employees on Leave
+                <span class="kpi-icon success">◷</span>
+              </div>
+              <div class="kpi-value" id="kpi-out">—</div>
+              <div class="kpi-meta">Approved leave covering today</div>
+            </article>
+            <article class="card kpi">
+              <div class="kpi-label">
+                Pending Leave Requests
+                <span class="kpi-icon warning">!</span>
+              </div>
+              <div class="kpi-value" id="kpi-pending">—</div>
+              <div class="kpi-meta" id="kpi-pending-meta">Loading…</div>
+            </article>
+            <article class="card kpi">
+              <div class="kpi-label">
+                Payroll Generated
+                <span class="kpi-icon">₤</span>
+              </div>
+              <div class="kpi-value" id="kpi-payroll">—</div>
+              <div class="kpi-meta" id="kpi-payroll-meta">Loading…</div>
+            </article>
+          </section>
+
+          <section class="grid grid-2" style="margin-top: 1rem">
+            <article class="card">
+              <div class="card-header">
+                <h2>Recent Leave Requests</h2>
+                <a class="btn ghost btn-sm" href="/leave">View all</a>
+              </div>
+              <div id="recent-leave" class="loading">Loading leave requests…</div>
+            </article>
+
+            <article class="card">
+              <div class="card-header">
+                <h2>Upcoming Leave</h2>
+                <span class="badge info">Next 14 days</span>
+              </div>
+              <div id="upcoming-leave" class="loading">Loading calendar…</div>
+            </article>
+          </section>
+
+          <section class="card" style="margin-top: 1rem">
+            <div class="card-header">
+              <h2>Latest Payroll Runs</h2>
+              <a class="btn ghost btn-sm" href="/payroll">Manage</a>
+            </div>
+            <div id="payroll-runs" class="loading">Loading payroll periods…</div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/common.js"></script>
+    <script src="/js/dashboard.js"></script>
+  </body>
+</html>
