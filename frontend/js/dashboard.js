@@ -1,6 +1,6 @@
 function renderLeaveList(items, emptyTitle, emptyBody) {
   if (!items.length) {
-    return `<div class="empty"><strong>${emptyTitle}</strong>${emptyBody}</div>`;
+    return emptyState(emptyTitle, emptyBody);
   }
 
   return items
@@ -23,8 +23,10 @@ function renderUpcoming(items) {
   const root = document.getElementById("upcoming-leave");
   if (!items.length) {
     root.className = "";
-    root.innerHTML =
-      '<div class="empty"><strong>No upcoming leave</strong>Approved leave in the next two weeks will appear here.</div>';
+    root.innerHTML = emptyState(
+      "No upcoming leave",
+      "Approved leave in the next two weeks will appear here."
+    );
     return;
   }
 
@@ -49,8 +51,10 @@ function renderBalances(items, year) {
   document.getElementById("balance-year").textContent = String(year);
 
   if (!items.length) {
-    root.innerHTML =
-      '<div class="empty"><strong>No balances</strong>Balances appear once employees are seeded.</div>';
+    root.innerHTML = emptyState(
+      "No balances",
+      "Balances appear once employees are seeded."
+    );
     return;
   }
 
@@ -83,8 +87,10 @@ function renderBalances(items, year) {
 function renderPayrollRuns(periods) {
   const root = document.getElementById("payroll-runs");
   if (!periods.length) {
-    root.innerHTML =
-      '<div class="empty"><strong>No payroll runs yet</strong>Generate a period from the Payroll page.</div>';
+    root.innerHTML = emptyState(
+      "No payroll runs yet",
+      "Generate a period from the Payroll page."
+    );
     return;
   }
 
@@ -120,8 +126,10 @@ function renderPayslips(payslips, latestPeriod) {
   badge.textContent = latestPeriod || "No period";
 
   if (!payslips.length) {
-    root.innerHTML =
-      '<div class="empty"><strong>No payslips</strong>Generate payroll to see slips here.</div>';
+    root.innerHTML = emptyState(
+      "No payslips",
+      "Generate payroll to see slips here."
+    );
     return;
   }
 
@@ -151,8 +159,24 @@ function renderPayslips(payslips, latestPeriod) {
     </div>`;
 }
 
+function setPanelLoading() {
+  [
+    "pending-approvals",
+    "out-today",
+    "leave-balances",
+    "upcoming-leave",
+    "payroll-runs",
+    "recent-payslips",
+  ].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = loadingState("Loading…");
+  });
+}
+
 async function loadDashboard() {
   const errorBox = document.getElementById("dashboard-error");
+  errorBox.hidden = true;
+  setPanelLoading();
 
   try {
     const data = await Api.get("/api/dashboard");
@@ -203,6 +227,20 @@ async function loadDashboard() {
   } catch (error) {
     errorBox.hidden = false;
     errorBox.textContent = error.message || "Could not load dashboard data.";
+    errorBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    [
+      "pending-approvals",
+      "out-today",
+      "leave-balances",
+      "upcoming-leave",
+      "payroll-runs",
+      "recent-payslips",
+    ].forEach((id) => {
+      document.getElementById(id).innerHTML = emptyState(
+        "Unavailable",
+        error.message || "Could not load this section."
+      );
+    });
   }
 }
 

@@ -8,9 +8,18 @@ const Api = {
       ...options,
     };
 
-    const response = await fetch(path, config);
-    let data = null;
+    let response;
+    try {
+      response = await fetch(path, config);
+    } catch (error) {
+      const networkError = new Error(
+        "Network error. Check that the server is running."
+      );
+      networkError.cause = error;
+      throw networkError;
+    }
 
+    let data = null;
     const contentType = response.headers.get("content-type") || "";
     if (contentType.includes("application/json")) {
       data = await response.json();
@@ -19,10 +28,10 @@ const Api = {
     if (!response.ok) {
       const message =
         (data && data.error) || `Request failed (${response.status})`;
-      const error = new Error(message);
-      error.status = response.status;
-      error.data = data;
-      throw error;
+      const apiError = new Error(message);
+      apiError.status = response.status;
+      apiError.data = data;
+      throw apiError;
     }
 
     return data;

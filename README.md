@@ -26,13 +26,14 @@ Currently under active development as part of a Software Engineering practical a
 - Employee management UI (create, edit, deactivate, org view)
 - Leave workflow UI (request, approve/reject, overdue filters)
 - Payroll UI (generate, payslips, finalize)
+- Frontend loading, empty, and error-state polish
 
 **Defined**
 - Project architecture
 - Core business workflows
 
 **Upcoming**
-- Frontend polish (loading/error states)
+- Final UI polish / screenshots
 - Docker setup
 
 ## Tech Stack

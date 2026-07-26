@@ -578,9 +578,33 @@ table.data td.muted {
 }
 
 .loading {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
   color: var(--text-secondary);
   font-size: 0.9rem;
-  padding: 0.75rem 0;
+  padding: 0.85rem 0;
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.btn.is-busy {
+  opacity: 0.75;
+  cursor: wait;
 }
 
 .flash {

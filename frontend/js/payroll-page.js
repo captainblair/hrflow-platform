@@ -1,25 +1,7 @@
 let allPeriods = [];
 let currentPayslips = [];
 let selectedPeriod = null;
-
-function showError(message) {
-  const box = document.getElementById("payroll-error");
-  document.getElementById("payroll-ok").hidden = true;
-  box.hidden = false;
-  box.textContent = message;
-}
-
-function showOk(message) {
-  const box = document.getElementById("payroll-ok");
-  document.getElementById("payroll-error").hidden = true;
-  box.hidden = false;
-  box.textContent = message;
-}
-
-function clearMessages() {
-  document.getElementById("payroll-error").hidden = true;
-  document.getElementById("payroll-ok").hidden = true;
-}
+const flash = createFlash("payroll-error", "payroll-ok");
 
 function fillMonthOptions() {
   const select = document.getElementById("pay-month");
@@ -45,16 +27,20 @@ function renderPayslipTable() {
   const items = filteredPayslips();
 
   if (!selectedPeriod) {
-    root.className = "empty";
-    root.innerHTML =
-      "<strong>No period selected</strong>Choose a payroll run to inspect payslips.";
+    root.className = "";
+    root.innerHTML = emptyState(
+      "No period selected",
+      "Choose a payroll run to inspect payslips."
+    );
     return;
   }
 
   if (!items.length) {
-    root.className = "empty";
-    root.innerHTML =
-      "<strong>No matching payslips</strong>Try a different name filter.";
+    root.className = "";
+    root.innerHTML = emptyState(
+      "No matching payslips",
+      "Try a different name filter."
+    );
     return;
   }
 
@@ -103,23 +89,25 @@ async function loadPayslips(period) {
   document.getElementById("payslip-period-label").textContent = label;
 
   const root = document.getElementById("payslip-table");
-  root.className = "loading";
-  root.textContent = "Loading payslips…";
+  root.className = "";
+  root.innerHTML = loadingState("Loading payslips…");
 
   try {
     currentPayslips = await Api.get(`/api/payroll/periods/${period.id}/payslips`);
     renderPayslipTable();
   } catch (error) {
-    root.className = "flash error";
-    root.textContent = error.message || "Could not load payslips.";
+    root.innerHTML = emptyState("Could not load payslips", error.message);
+    flash.error(error.message || "Could not load payslips.");
   }
 }
 
 function renderPeriods() {
   const root = document.getElementById("period-table");
   if (!allPeriods.length) {
-    root.innerHTML =
-      '<div class="empty"><strong>No payroll periods</strong>Generate a month to create payslips.</div>';
+    root.innerHTML = emptyState(
+      "No payroll periods",
+      "Generate a month to create payslips."
+    );
     return;
   }
 
@@ -173,7 +161,10 @@ function renderPeriods() {
 }
 
 async function loadPayrollPage() {
-  clearMessages();
+  flash.clear();
+  const periodsRoot = document.getElementById("period-table");
+  periodsRoot.innerHTML = loadingState("Loading periods…");
+
   try {
     allPeriods = await Api.get("/api/payroll/periods");
     renderPeriods();
@@ -186,13 +177,16 @@ async function loadPayrollPage() {
       renderPayslipTable();
     }
   } catch (error) {
-    showError(error.message || "Could not load payroll data.");
+    periodsRoot.innerHTML = emptyState("Could not load periods", error.message);
+    flash.error(error.message || "Could not load payroll data.");
   }
 }
 
 async function generatePayroll(event) {
   event.preventDefault();
-  clearMessages();
+  flash.clear();
+  const button = event.target.querySelector('button[type="submit"]');
+  setBusy(button, true, "Generating…");
 
   const payload = {
     year: Number(document.getElementById("pay-year").value),
@@ -201,12 +195,14 @@ async function generatePayroll(event) {
 
   try {
     const result = await Api.post("/api/payroll/generate", payload);
-    showOk(
+    flash.ok(
       `Generated ${result.payslip_count} payslips for ${payload.year}-${String(payload.month).padStart(2, "0")}.`
     );
     await loadPayrollPage();
   } catch (error) {
-    showError(error.message || "Could not generate payroll.");
+    flash.error(error.message || "Could not generate payroll.");
+  } finally {
+    setBusy(button, false);
   }
 }
 
@@ -218,13 +214,13 @@ async function finalizePeriod(periodId) {
     return;
   }
 
-  clearMessages();
+  flash.clear();
   try {
     await Api.post(`/api/payroll/periods/${periodId}/finalize`);
-    showOk(`${label} finalized.`);
+    flash.ok(`${label} finalized.`);
     await loadPayrollPage();
   } catch (error) {
-    showError(error.message || "Could not finalize period.");
+    flash.error(error.message || "Could not finalize period.");
   }
 }
 

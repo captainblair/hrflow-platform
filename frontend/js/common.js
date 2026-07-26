@@ -53,4 +53,57 @@ function formatDate(value) {
   return value.slice(0, 10);
 }
 
+function emptyState(title, body) {
+  return `<div class="empty"><strong>${title}</strong>${body || ""}</div>`;
+}
+
+function loadingState(message) {
+  return `<div class="loading"><span class="spinner" aria-hidden="true"></span>${message || "Loading…"}</div>`;
+}
+
+function setBusy(button, busy, busyLabel) {
+  if (!button) return;
+  if (busy) {
+    button.dataset.label = button.textContent;
+    button.disabled = true;
+    button.classList.add("is-busy");
+    button.textContent = busyLabel || "Working…";
+  } else {
+    button.disabled = false;
+    button.classList.remove("is-busy");
+    if (button.dataset.label) {
+      button.textContent = button.dataset.label;
+      delete button.dataset.label;
+    }
+  }
+}
+
+function createFlash(errorId, okId) {
+  const errorBox = document.getElementById(errorId);
+  const okBox = document.getElementById(okId);
+
+  function clear() {
+    if (errorBox) errorBox.hidden = true;
+    if (okBox) okBox.hidden = true;
+  }
+
+  function show(box, message) {
+    clear();
+    if (!box) return;
+    box.hidden = false;
+    box.textContent = message;
+    box.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  return {
+    clear,
+    error(message) {
+      show(errorBox, message);
+    },
+    ok(message) {
+      show(okBox, message);
+    },
+  };
+}
+
 document.addEventListener("DOMContentLoaded", markActiveNav);

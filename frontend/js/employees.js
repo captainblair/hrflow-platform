@@ -1,26 +1,6 @@
 let allEmployees = [];
 let statusFilter = "active";
-
-function showError(message) {
-  const box = document.getElementById("employees-error");
-  const ok = document.getElementById("employees-ok");
-  ok.hidden = true;
-  box.hidden = false;
-  box.textContent = message;
-}
-
-function showOk(message) {
-  const box = document.getElementById("employees-ok");
-  const err = document.getElementById("employees-error");
-  err.hidden = true;
-  box.hidden = false;
-  box.textContent = message;
-}
-
-function clearMessages() {
-  document.getElementById("employees-error").hidden = true;
-  document.getElementById("employees-ok").hidden = true;
-}
+const flash = createFlash("employees-error", "employees-ok");
 
 function filteredEmployees() {
   let items = allEmployees;
@@ -62,8 +42,10 @@ function renderEmployees() {
   document.getElementById("employee-count").textContent = `${employees.length} shown`;
 
   if (!employees.length) {
-    root.innerHTML =
-      '<div class="empty"><strong>No employees found</strong>Try a different filter or search.</div>';
+    root.innerHTML = emptyState(
+      "No employees found",
+      "Try a different filter or search."
+    );
     return;
   }
 
@@ -139,7 +121,12 @@ function renderOrgNodes(nodes, depth = 0) {
 }
 
 async function loadEmployeesPage() {
-  clearMessages();
+  flash.clear();
+  const table = document.getElementById("employee-table");
+  const orgRoot = document.getElementById("org-tree");
+  table.innerHTML = loadingState("Loading employees…");
+  orgRoot.innerHTML = loadingState("Loading org tree…");
+
   try {
     const [employees, org] = await Promise.all([
       Api.get("/api/employees"),
@@ -148,19 +135,21 @@ async function loadEmployeesPage() {
     allEmployees = employees;
     fillManagerOptions(document.getElementById("emp-manager"));
     renderEmployees();
-
-    const orgRoot = document.getElementById("org-tree");
     orgRoot.innerHTML = org.length
       ? renderOrgNodes(org)
-      : '<div class="empty"><strong>No org data</strong></div>';
+      : emptyState("No org data", "Add employees with managers to build the tree.");
   } catch (error) {
-    showError(error.message || "Could not load employees.");
+    table.innerHTML = emptyState("Could not load directory", error.message);
+    orgRoot.innerHTML = emptyState("Could not load org tree", error.message);
+    flash.error(error.message || "Could not load employees.");
   }
 }
 
 async function createEmployee(event) {
   event.preventDefault();
-  clearMessages();
+  flash.clear();
+  const button = event.target.querySelector('button[type="submit"]');
+  setBusy(button, true, "Creating…");
 
   const managerValue = document.getElementById("emp-manager").value;
   const payload = {
@@ -176,10 +165,12 @@ async function createEmployee(event) {
   try {
     await Api.post("/api/employees", payload);
     event.target.reset();
-    showOk("Employee created.");
+    flash.ok("Employee created.");
     await loadEmployeesPage();
   } catch (error) {
-    showError(error.message || "Could not create employee.");
+    flash.error(error.message || "Could not create employee.");
+  } finally {
+    setBusy(button, false);
   }
 }
 
@@ -213,7 +204,9 @@ function closeEditModal() {
 
 async function saveEmployee(event) {
   event.preventDefault();
-  clearMessages();
+  flash.clear();
+  const button = event.target.querySelector('button[type="submit"]');
+  setBusy(button, true, "Saving…");
 
   const id = Number(document.getElementById("edit-id").value);
   const managerValue = document.getElementById("edit-manager").value;
@@ -230,10 +223,12 @@ async function saveEmployee(event) {
   try {
     await Api.patch(`/api/employees/${id}`, payload);
     closeEditModal();
-    showOk("Employee updated.");
+    flash.ok("Employee updated.");
     await loadEmployeesPage();
   } catch (error) {
-    showError(error.message || "Could not update employee.");
+    flash.error(error.message || "Could not update employee.");
+  } finally {
+    setBusy(button, false);
   }
 }
 
@@ -244,13 +239,13 @@ async function deactivateEmployee(employeeId) {
     return;
   }
 
-  clearMessages();
+  flash.clear();
   try {
     await Api.post(`/api/employees/${employeeId}/deactivate`);
-    showOk(`${employee.name} deactivated.`);
+    flash.ok(`${employee.name} deactivated.`);
     await loadEmployeesPage();
   } catch (error) {
-    showError(error.message || "Could not deactivate employee.");
+    flash.error(error.message || "Could not deactivate employee.");
   }
 }
 

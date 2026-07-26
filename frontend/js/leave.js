@@ -1,26 +1,7 @@
 let allLeave = [];
 let allEmployees = [];
 let currentFilter = "all";
-let pendingDecide = null;
-
-function showError(message) {
-  const box = document.getElementById("leave-error");
-  document.getElementById("leave-ok").hidden = true;
-  box.hidden = false;
-  box.textContent = message;
-}
-
-function showOk(message) {
-  const box = document.getElementById("leave-ok");
-  document.getElementById("leave-error").hidden = true;
-  box.hidden = false;
-  box.textContent = message;
-}
-
-function clearMessages() {
-  document.getElementById("leave-error").hidden = true;
-  document.getElementById("leave-ok").hidden = true;
-}
+const flash = createFlash("leave-error", "leave-ok");
 
 function applyLeaveFilter() {
   let items = allLeave;
@@ -49,8 +30,10 @@ function setFilterButtons() {
 function renderLeaveTable(items) {
   const root = document.getElementById("leave-table");
   if (!items.length) {
-    root.innerHTML =
-      '<div class="empty"><strong>No matching requests</strong>Adjust filters to see more.</div>';
+    root.innerHTML = emptyState(
+      "No matching requests",
+      "Adjust filters or submit a new leave request."
+    );
     return;
   }
 
@@ -84,9 +67,7 @@ function renderLeaveTable(items) {
               </td>
               <td>${item.leave_type}</td>
               <td class="muted">${formatDate(item.start_date)} → ${formatDate(item.end_date)} (${item.days}d)</td>
-              <td>
-                ${leaveStatusBadges(item)}
-              </td>
+              <td>${leaveStatusBadges(item)}</td>
               <td>${actions}</td>
             </tr>`;
             })
@@ -128,6 +109,7 @@ async function refreshBalance() {
     return;
   }
 
+  badge.textContent = "Loading balance…";
   try {
     const balance = await Api.get(`/api/leave/balances/${employeeId}`);
     badge.textContent = `Annual left: ${balance.annual_remaining}`;
@@ -140,7 +122,6 @@ function openDecideModal(leaveId, action) {
   const leave = allLeave.find((item) => item.id === leaveId);
   if (!leave) return;
 
-  pendingDecide = { leave, action };
   document.getElementById("decide-leave-id").value = leaveId;
   document.getElementById("decide-action").value = action;
   document.getElementById("decide-title").textContent =
@@ -171,14 +152,16 @@ function openDecideModal(leaveId, action) {
 }
 
 function closeDecideModal() {
-  pendingDecide = null;
   const modal = document.getElementById("decide-modal");
   modal.classList.remove("open");
   modal.setAttribute("aria-hidden", "true");
 }
 
 async function loadLeavePage() {
-  clearMessages();
+  flash.clear();
+  const table = document.getElementById("leave-table");
+  table.innerHTML = loadingState("Loading leave requests…");
+
   try {
     const [leave, employees] = await Promise.all([
       Api.get("/api/leave"),
@@ -191,13 +174,16 @@ async function loadLeavePage() {
     applyLeaveFilter();
     await refreshBalance();
   } catch (error) {
-    showError(error.message || "Could not load leave data.");
+    table.innerHTML = emptyState("Could not load leave queue", error.message);
+    flash.error(error.message || "Could not load leave data.");
   }
 }
 
 async function submitLeave(event) {
   event.preventDefault();
-  clearMessages();
+  flash.clear();
+  const button = event.target.querySelector('button[type="submit"]');
+  setBusy(button, true, "Submitting…");
 
   const payload = {
     employee_id: Number(document.getElementById("leave-employee").value),
@@ -210,34 +196,41 @@ async function submitLeave(event) {
   try {
     await Api.post("/api/leave", payload);
     event.target.reset();
-    showOk("Leave request submitted.");
+    flash.ok("Leave request submitted.");
     await loadLeavePage();
   } catch (error) {
-    showError(error.message || "Could not submit leave request.");
+    flash.error(error.message || "Could not submit leave request.");
+  } finally {
+    setBusy(button, false);
   }
 }
 
 async function confirmDecision(event) {
   event.preventDefault();
-  clearMessages();
+  flash.clear();
 
   const leaveId = Number(document.getElementById("decide-leave-id").value);
   const action = document.getElementById("decide-action").value;
   const approverId = Number(document.getElementById("decide-approver").value);
+  const button = document.getElementById("decide-confirm");
+
   if (!approverId) {
-    showError("Approver is required.");
+    flash.error("Approver is required.");
     return;
   }
 
+  setBusy(button, true, action === "approve" ? "Approving…" : "Rejecting…");
   try {
     await Api.post(`/api/leave/${leaveId}/${action}`, {
       approver_id: approverId,
     });
     closeDecideModal();
-    showOk(action === "approve" ? "Leave approved." : "Leave rejected.");
+    flash.ok(action === "approve" ? "Leave approved." : "Leave rejected.");
     await loadLeavePage();
   } catch (error) {
-    showError(error.message || `Could not ${action} leave request.`);
+    flash.error(error.message || `Could not ${action} leave request.`);
+  } finally {
+    setBusy(button, false);
   }
 }
 
