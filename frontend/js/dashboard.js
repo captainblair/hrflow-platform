@@ -73,9 +73,9 @@ function renderBalances(items, year) {
             .map(
               (item) => `
             <tr>
-              <td>${item.employee_name || "Employee #" + item.employee_id}</td>
-              <td>${item.annual_used}/${item.annual_allocated}</td>
-              <td><strong>${item.annual_remaining}</strong></td>
+              <td data-label="Employee">${item.employee_name || "Employee #" + item.employee_id}</td>
+              <td data-label="Used">${item.annual_used}/${item.annual_allocated}</td>
+              <td data-label="Remaining"><strong>${item.annual_remaining}</strong></td>
             </tr>`
             )
             .join("")}
@@ -109,9 +109,9 @@ function renderPayrollRuns(periods) {
             .map(
               (period) => `
             <tr>
-              <td>${period.year}-${String(period.month).padStart(2, "0")}</td>
-              <td>${statusBadge(period.status)}</td>
-              <td>${period.payslip_count}</td>
+              <td data-label="Period">${period.year}-${String(period.month).padStart(2, "0")}</td>
+              <td data-label="Status">${statusBadge(period.status)}</td>
+              <td data-label="Payslips">${period.payslip_count}</td>
             </tr>`
             )
             .join("")}
@@ -148,9 +148,9 @@ function renderPayslips(payslips, latestPeriod) {
             .map(
               (item) => `
             <tr>
-              <td>${item.employee_name}</td>
-              <td>${formatMoney(item.gross_pay)}</td>
-              <td><strong>${formatMoney(item.net_pay)}</strong></td>
+              <td data-label="Employee">${item.employee_name}</td>
+              <td data-label="Gross">${formatMoney(item.gross_pay)}</td>
+              <td data-label="Net"><strong>${formatMoney(item.net_pay)}</strong></td>
             </tr>`
             )
             .join("")}

@@ -61,14 +61,14 @@ function renderLeaveTable(items) {
                   : `<span class="muted">${item.decided_by_name || "—"}</span>`;
               return `
             <tr>
-              <td>
+              <td data-label="Employee">
                 <strong>${item.employee_name}</strong>
                 <div class="meta muted">${item.reason || "No reason given"}</div>
               </td>
-              <td>${item.leave_type}</td>
-              <td class="muted">${formatDate(item.start_date)} → ${formatDate(item.end_date)} (${item.days}d)</td>
-              <td>${leaveStatusBadges(item)}</td>
-              <td>${actions}</td>
+              <td data-label="Type">${item.leave_type}</td>
+              <td data-label="Dates" class="muted">${formatDate(item.start_date)} → ${formatDate(item.end_date)} (${item.days}d)</td>
+              <td data-label="Status">${leaveStatusBadges(item)}</td>
+              <td data-label="Actions">${actions}</td>
             </tr>`;
             })
             .join("")}

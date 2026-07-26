@@ -68,16 +68,16 @@ function renderEmployees() {
             .map(
               (item) => `
             <tr>
-              <td>
+              <td data-label="Name">
                 <strong>${item.name}</strong>
                 <div class="meta muted">${item.employment_type} · started ${formatDate(item.start_date)}</div>
               </td>
-              <td>${item.role}</td>
-              <td>${item.team}</td>
-              <td class="muted">${item.manager_name || "—"}</td>
-              <td>${formatMoney(item.salary)}</td>
-              <td>${item.is_active ? statusBadge("active") : statusBadge("inactive")}</td>
-              <td>
+              <td data-label="Role">${item.role}</td>
+              <td data-label="Team">${item.team}</td>
+              <td data-label="Manager" class="muted">${item.manager_name || "—"}</td>
+              <td data-label="Salary">${formatMoney(item.salary)}</td>
+              <td data-label="Status">${item.is_active ? statusBadge("active") : statusBadge("inactive")}</td>
+              <td data-label="Actions">
                 <button class="btn secondary btn-sm" type="button" data-edit="${item.id}">Edit</button>
                 ${
                   item.is_active
@@ -100,20 +100,22 @@ function renderEmployees() {
   });
 }
 
-function renderOrgNodes(nodes, depth = 0) {
+function renderOrgNodes(nodes, depth = 0, managerName = null) {
   return nodes
     .map((node) => {
-      const pad = depth * 16;
       const children =
         node.reports && node.reports.length
-          ? renderOrgNodes(node.reports, depth + 1)
+          ? renderOrgNodes(node.reports, depth + 1, node.name)
           : "";
+      const reportsLine = managerName
+        ? `<div class="org-reports">Reports to ${managerName}</div>`
+        : `<div class="org-reports org-reports-root">Top of team</div>`;
       return `
-        <div class="list-item" style="padding-left:${pad}px">
-          <div>
-            <div class="title">${node.name}</div>
-            <div class="meta">${node.role} · ${node.team}</div>
-          </div>
+        <div class="org-node" data-depth="${depth}">
+          <div class="org-name">${node.name}</div>
+          <div class="org-role">${node.role}</div>
+          <div class="org-team">${node.team}</div>
+          ${reportsLine}
         </div>
         ${children}`;
     })
@@ -136,7 +138,7 @@ async function loadEmployeesPage() {
     fillManagerOptions(document.getElementById("emp-manager"));
     renderEmployees();
     orgRoot.innerHTML = org.length
-      ? renderOrgNodes(org)
+      ? `<div class="org-tree">${renderOrgNodes(org)}</div>`
       : emptyState("No org data", "Add employees with managers to build the tree.");
   } catch (error) {
     table.innerHTML = emptyState("Could not load directory", error.message);

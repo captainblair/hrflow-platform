@@ -64,17 +64,17 @@ function renderPayslipTable() {
               const details = item.details || {};
               return `
               <tr>
-                <td>
+                <td data-label="Employee">
                   <strong>${item.employee_name}</strong>
                   <div class="meta muted">
                     unpaid ${details.unpaid_leave_days ?? 0} · employed ${details.employed_days ?? "—"}
                   </div>
                 </td>
-                <td>${formatMoney(item.gross_pay)}</td>
-                <td>${formatMoney(item.social_security)}</td>
-                <td>${formatMoney(item.income_tax)}</td>
-                <td><strong>${formatMoney(item.net_pay)}</strong></td>
-                <td class="muted">${details.eligible_days ?? "—"}/${details.days_in_month ?? "—"}</td>
+                <td data-label="Gross">${formatMoney(item.gross_pay)}</td>
+                <td data-label="Social sec.">${formatMoney(item.social_security)}</td>
+                <td data-label="Tax">${formatMoney(item.income_tax)}</td>
+                <td data-label="Net"><strong>${formatMoney(item.net_pay)}</strong></td>
+                <td data-label="Days" class="muted">${details.eligible_days ?? "—"}/${details.days_in_month ?? "—"}</td>
               </tr>`;
             })
             .join("")}
@@ -132,10 +132,10 @@ function renderPeriods() {
                   : "";
               return `
               <tr>
-                <td><strong>${label}</strong></td>
-                <td>${statusBadge(period.status)}</td>
-                <td>${period.payslip_count}</td>
-                <td>
+                <td data-label="Period"><strong>${label}</strong></td>
+                <td data-label="Status">${statusBadge(period.status)}</td>
+                <td data-label="Payslips">${period.payslip_count}</td>
+                <td data-label="Actions">
                   <button class="btn secondary btn-sm" type="button" data-view="${period.id}">
                     View
                   </button>

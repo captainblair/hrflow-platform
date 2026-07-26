@@ -37,7 +37,7 @@ function leaveStatusBadges(item) {
   if (item.end_date && item.end_date < todayISO()) {
     parts.push('<span class="badge inactive">Past</span>');
   }
-  return parts.join(" ");
+  return `<span class="badge-group">${parts.join("")}</span>`;
 }
 
 function formatMoney(value) {
