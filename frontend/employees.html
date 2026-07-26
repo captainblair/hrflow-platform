@@ -45,19 +45,71 @@
           <div class="page-header">
             <div>
               <h1>Employees</h1>
-              <p>Active and inactive records, managers, and reporting lines.</p>
+              <p>
+                Create and update records, set managers, and deactivate without
+                deleting history.
+              </p>
+            </div>
+            <div class="page-actions">
+              <button class="btn secondary" type="button" id="filter-active">Active</button>
+              <button class="btn ghost" type="button" id="filter-all">All</button>
+              <button class="btn ghost" type="button" id="filter-inactive">Inactive</button>
             </div>
           </div>
 
           <div id="employees-error" class="flash error" hidden></div>
+          <div id="employees-ok" class="flash ok" hidden></div>
 
           <section class="grid grid-2">
             <article class="card">
               <div class="card-header">
-                <h2>Directory</h2>
-                <span class="badge info" id="employee-count">—</span>
+                <h2>Add employee</h2>
               </div>
-              <div id="employee-table" class="loading">Loading employees…</div>
+              <form class="form-grid" id="employee-form">
+                <div class="form-row">
+                  <div class="field">
+                    <label for="emp-name">Name</label>
+                    <input id="emp-name" name="name" required />
+                  </div>
+                  <div class="field">
+                    <label for="emp-role">Role</label>
+                    <input id="emp-role" name="role" required />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="field">
+                    <label for="emp-team">Team</label>
+                    <input id="emp-team" name="team" required />
+                  </div>
+                  <div class="field">
+                    <label for="emp-manager">Manager</label>
+                    <select id="emp-manager" name="manager_id">
+                      <option value="">No manager</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="field">
+                    <label for="emp-start">Start date</label>
+                    <input id="emp-start" name="start_date" type="date" required />
+                  </div>
+                  <div class="field">
+                    <label for="emp-salary">Monthly salary</label>
+                    <input id="emp-salary" name="salary" type="number" min="0" step="0.01" required />
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="emp-type">Employment type</label>
+                  <select id="emp-type" name="employment_type">
+                    <option value="full_time">full_time</option>
+                    <option value="part_time">part_time</option>
+                    <option value="contract">contract</option>
+                  </select>
+                </div>
+                <div>
+                  <button class="btn" type="submit">Create employee</button>
+                </div>
+              </form>
             </article>
 
             <article class="card">
@@ -68,7 +120,67 @@
               <div id="org-tree" class="loading">Loading org tree…</div>
             </article>
           </section>
+
+          <section class="card" style="margin-top: 1rem">
+            <div class="card-header">
+              <h2>Directory</h2>
+              <span class="badge info" id="employee-count">—</span>
+            </div>
+            <div id="employee-table" class="loading">Loading employees…</div>
+          </section>
         </main>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="edit-modal" aria-hidden="true">
+      <div class="modal" role="dialog" aria-labelledby="edit-title">
+        <h3 id="edit-title">Edit employee</h3>
+        <p>Update details. Deactivation is separate so payroll history stays intact.</p>
+        <form class="form-grid" id="edit-form">
+          <input type="hidden" id="edit-id" />
+          <div class="form-row">
+            <div class="field">
+              <label for="edit-name">Name</label>
+              <input id="edit-name" required />
+            </div>
+            <div class="field">
+              <label for="edit-role">Role</label>
+              <input id="edit-role" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="edit-team">Team</label>
+              <input id="edit-team" required />
+            </div>
+            <div class="field">
+              <label for="edit-manager">Manager</label>
+              <select id="edit-manager"></select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="edit-start">Start date</label>
+              <input id="edit-start" type="date" required />
+            </div>
+            <div class="field">
+              <label for="edit-salary">Monthly salary</label>
+              <input id="edit-salary" type="number" min="0" step="0.01" required />
+            </div>
+          </div>
+          <div class="field">
+            <label for="edit-type">Employment type</label>
+            <select id="edit-type">
+              <option value="full_time">full_time</option>
+              <option value="part_time">part_time</option>
+              <option value="contract">contract</option>
+            </select>
+          </div>
+          <div class="modal-actions">
+            <button class="btn ghost" type="button" id="edit-cancel">Cancel</button>
+            <button class="btn" type="submit">Save changes</button>
+          </div>
+        </form>
       </div>
     </div>
 

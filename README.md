@@ -23,13 +23,14 @@ Currently under active development as part of a Software Engineering practical a
 - Backend tests for core leave and payroll logic
 - Frontend shell (pages, shared styles, API client)
 - Dashboard API and live dashboard UI
+- Employee management UI (create, edit, deactivate, org view)
 
 **Defined**
 - Project architecture
 - Core business workflows
 
 **Upcoming**
-- Employee, leave, and payroll UI
+- Leave and payroll UI
 - Docker setup
 
 ## Tech Stack
