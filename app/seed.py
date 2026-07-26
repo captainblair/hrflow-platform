@@ -18,7 +18,7 @@ def seed_command():
         role="General Manager",
         team="Management",
         start_date=date(2023, 2, 1),
-        salary=28000,
+        salary=95000,
         employment_type="full_time",
     )
     db.session.add(grace)
@@ -30,7 +30,7 @@ def seed_command():
         team="Engineering",
         manager_id=grace.id,
         start_date=date(2023, 9, 18),
-        salary=20000,
+        salary=75000,
         employment_type="full_time",
     )
     alice = Employee(
@@ -39,7 +39,7 @@ def seed_command():
         team="Operations",
         manager_id=grace.id,
         start_date=date(2024, 5, 6),
-        salary=12000,
+        salary=48000,
         employment_type="full_time",
     )
     db.session.add_all([brian, alice])
@@ -51,8 +51,7 @@ def seed_command():
         team="Engineering",
         manager_id=brian.id,
         start_date=date(2024, 11, 4),
-        # Sits exactly on the 15,000 tax bracket boundary on purpose.
-        salary=15000,
+        salary=55000,
         employment_type="full_time",
     )
     kevin = Employee(
@@ -61,7 +60,7 @@ def seed_command():
         team="Engineering",
         manager_id=brian.id,
         start_date=date(2025, 3, 10),
-        salary=14000,
+        salary=52000,
         employment_type="full_time",
     )
     daniel = Employee(
@@ -71,7 +70,7 @@ def seed_command():
         manager_id=grace.id,
         # Mid-month starter, useful for checking payroll proration.
         start_date=date.today().replace(day=15),
-        salary=9000,
+        salary=38000,
         employment_type="part_time",
     )
     wycliffe = Employee(
@@ -80,8 +79,7 @@ def seed_command():
         team="Operations",
         manager_id=alice.id,
         start_date=date(2024, 8, 12),
-        # Low enough to land in the 0% tax band.
-        salary=4500,
+        salary=30000,
         employment_type="contract",
     )
     db.session.add_all([faith, kevin, daniel, wycliffe])

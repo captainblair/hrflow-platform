@@ -11,5 +11,5 @@ Save capture files in this folder using the exact names below so the main README
 
 Tips:
 - Run the seeded app (`flask seed` then `python run.py`) so the panels have real data.
-- Use a desktop browser width (~1280px) so the sidebar layout shows.
+- Prefer a desktop width around 1280px so the sidebar and main panels both show clearly.
 - Optional: add `dashboard-mobile.png` for a narrow viewport if you want a mobile shot; it is not linked in the README by default.
