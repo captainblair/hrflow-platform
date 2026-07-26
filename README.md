@@ -19,13 +19,13 @@ Currently under active development as part of a Software Engineering practical a
 - Leave management API (request, approve/reject, balances)
 - Leave business rules (notice, overlaps, coverage, overdue)
 - Payroll calculation engine (proration, tax, social security)
+- Payslip generation and payroll periods
 
 **Defined**
 - Project architecture
 - Core business workflows
 
 **Upcoming**
-- Payslip generation and payroll periods
 - Frontend dashboard
 - Testing
 - Docker setup
@@ -251,10 +251,11 @@ Base path: `/api`
 
 **Payroll**
 - `POST /api/payroll/preview` — calculate without saving
-- `POST /api/payroll/generate` *(planned)*
-- `GET /api/payroll/periods` *(planned)*
-- `GET /api/payroll/periods/<id>/payslips` *(planned)*
-- `GET /api/payroll/payslips/<id>` *(planned)*
+- `POST /api/payroll/generate` — create/regenerate draft period + payslips
+- `GET /api/payroll/periods`
+- `GET /api/payroll/periods/<id>/payslips`
+- `POST /api/payroll/periods/<id>/finalize`
+- `GET /api/payroll/payslips/<id>`
 
 **Dashboard**
 - `GET /api/dashboard`

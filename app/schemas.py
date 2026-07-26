@@ -42,3 +42,29 @@ def serialize_leave_balance(balance):
         "annual_used": balance.annual_used,
         "annual_remaining": balance.annual_remaining,
     }
+
+
+def serialize_payroll_period(period):
+    return {
+        "id": period.id,
+        "year": period.year,
+        "month": period.month,
+        "status": period.status,
+        "payslip_count": len(period.payslips) if period.payslips is not None else 0,
+        "created_at": period.created_at.isoformat() if period.created_at else None,
+    }
+
+
+def serialize_payslip(payslip):
+    return {
+        "id": payslip.id,
+        "period_id": payslip.period_id,
+        "employee_id": payslip.employee_id,
+        "employee_name": payslip.employee.name if payslip.employee else None,
+        "gross_pay": float(payslip.gross_pay),
+        "social_security": float(payslip.social_security),
+        "income_tax": float(payslip.income_tax),
+        "net_pay": float(payslip.net_pay),
+        "details": payslip.details,
+        "created_at": payslip.created_at.isoformat() if payslip.created_at else None,
+    }
