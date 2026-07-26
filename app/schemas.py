@@ -14,6 +14,8 @@ def serialize_employee(employee):
 
 
 def serialize_leave_request(leave):
+    from app.services.leave_rules import is_overdue
+
     return {
         "id": leave.id,
         "employee_id": leave.employee_id,
@@ -24,6 +26,7 @@ def serialize_leave_request(leave):
         "days": (leave.end_date - leave.start_date).days + 1,
         "status": leave.status,
         "reason": leave.reason,
+        "is_overdue": is_overdue(leave),
         "decided_at": leave.decided_at.isoformat() if leave.decided_at else None,
         "decided_by": leave.decided_by,
         "decided_by_name": leave.decider.name if leave.decider else None,

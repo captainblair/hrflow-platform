@@ -17,13 +17,13 @@ Currently under active development as part of a Software Engineering practical a
 - API health endpoint
 - Employee records API (CRUD, deactivate, org tree)
 - Leave management API (request, approve/reject, balances)
+- Leave business rules (notice, overlaps, coverage, overdue)
 
 **Defined**
 - Project architecture
 - Core business workflows
 
 **Upcoming**
-- Leave business rules (notice, overlaps, coverage, overdue)
 - Payroll modules
 - Frontend dashboard
 - Testing
@@ -241,12 +241,12 @@ Base path: `/api`
 - `GET /api/employees/org`
 
 **Leave**
-- `GET /api/leave`
+- `GET /api/leave` (filters: `status`, `employee_id`, `overdue`)
 - `POST /api/leave`
 - `POST /api/leave/<id>/approve`
 - `POST /api/leave/<id>/reject`
 - `GET /api/leave/balances/<employee_id>`
-- `GET /api/leave/coverage`
+- `GET /api/leave/coverage?date=YYYY-MM-DD&team=...`
 
 **Payroll**
 - `POST /api/payroll/generate`

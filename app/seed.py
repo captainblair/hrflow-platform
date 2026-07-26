@@ -106,14 +106,14 @@ def seed_command():
                 end_date=today + timedelta(days=14),
                 reason="Family visit upcountry",
             ),
-            # Sat unanswered for over a week, should show up as overdue.
+            # Sat unanswered long enough to trip the overdue rule (> 5 business days).
             LeaveRequest(
                 employee_id=kevin.id,
                 leave_type="annual",
                 start_date=today + timedelta(days=20),
                 end_date=today + timedelta(days=22),
                 reason="Long weekend away",
-                created_at=datetime.now() - timedelta(days=9),
+                created_at=datetime.now() - timedelta(days=14),
             ),
             # Already approved sick leave from earlier in the month.
             LeaveRequest(

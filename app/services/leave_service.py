@@ -3,6 +3,7 @@ from datetime import date, datetime
 from app.extensions import db
 from app.models import Employee, LeaveBalance, LeaveRequest
 from app.models.leave import LEAVE_TYPES
+from app.services import leave_rules
 from app.utils.errors import ApiError
 
 
@@ -34,13 +35,17 @@ def get_or_create_balance(employee_id, year=None):
     return balance
 
 
-def list_leave_requests(status=None, employee_id=None):
+def list_leave_requests(status=None, employee_id=None, overdue_only=False):
     query = LeaveRequest.query
     if status:
         query = query.filter_by(status=status)
     if employee_id is not None:
         query = query.filter_by(employee_id=employee_id)
-    return query.order_by(LeaveRequest.created_at.desc()).all()
+
+    results = query.order_by(LeaveRequest.created_at.desc()).all()
+    if overdue_only:
+        results = [item for item in results if leave_rules.is_overdue(item)]
+    return results
 
 
 def get_leave_request(leave_id):
@@ -70,6 +75,10 @@ def submit_leave(data):
     end_date = _parse_date(data["end_date"], "end_date")
     if end_date < start_date:
         raise ApiError("end_date cannot be before start_date")
+
+    leave_rules.validate_notice(leave_type, start_date)
+    leave_rules.validate_no_overlap(employee.id, start_date, end_date)
+    leave_rules.validate_team_coverage(employee, start_date, end_date)
 
     leave = LeaveRequest(
         employee_id=employee.id,
@@ -113,6 +122,14 @@ def approve_leave(leave_id, data):
     _require_pending(leave)
     approver = _resolve_approver(leave, data)
 
+    # Re-check coverage at decision time in case other leave landed since submit.
+    leave_rules.validate_team_coverage(
+        leave.employee,
+        leave.start_date,
+        leave.end_date,
+        exclude_leave_id=leave.id,
+    )
+
     days = leave_days(leave.start_date, leave.end_date)
 
     if leave.leave_type == "annual":
@@ -151,3 +168,7 @@ def get_balance(employee_id, year=None):
     balance = get_or_create_balance(employee_id, year)
     db.session.commit()
     return balance
+
+
+def get_coverage(day, team=None):
+    return leave_rules.coverage_for_date(day, team=team)
