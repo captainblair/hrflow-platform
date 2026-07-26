@@ -50,8 +50,8 @@
             <div>
               <h1>Dashboard</h1>
               <p>
-                A quick view of headcount, leave pressure, and the latest payroll
-                run.
+                Pending approvals, people out today, leave balances, and the
+                latest payroll run.
               </p>
             </div>
             <div class="page-actions">
@@ -100,27 +100,55 @@
           <section class="grid grid-2" style="margin-top: 1rem">
             <article class="card">
               <div class="card-header">
-                <h2>Recent Leave Requests</h2>
+                <h2>Pending approvals</h2>
                 <a class="btn ghost btn-sm" href="/leave">View all</a>
               </div>
-              <div id="recent-leave" class="loading">Loading leave requests…</div>
+              <div id="pending-approvals" class="loading">Loading…</div>
             </article>
 
             <article class="card">
               <div class="card-header">
-                <h2>Upcoming Leave</h2>
+                <h2>Who is out today</h2>
+                <span class="badge info" id="out-today-badge">Today</span>
+              </div>
+              <div id="out-today" class="loading">Loading…</div>
+            </article>
+          </section>
+
+          <section class="grid grid-2" style="margin-top: 1rem">
+            <article class="card">
+              <div class="card-header">
+                <h2>Leave balances</h2>
+                <span class="badge" id="balance-year">Year</span>
+              </div>
+              <div id="leave-balances" class="loading">Loading balances…</div>
+            </article>
+
+            <article class="card">
+              <div class="card-header">
+                <h2>Upcoming leave</h2>
                 <span class="badge info">Next 14 days</span>
               </div>
               <div id="upcoming-leave" class="loading">Loading calendar…</div>
             </article>
           </section>
 
-          <section class="card" style="margin-top: 1rem">
-            <div class="card-header">
-              <h2>Latest Payroll Runs</h2>
-              <a class="btn ghost btn-sm" href="/payroll">Manage</a>
-            </div>
-            <div id="payroll-runs" class="loading">Loading payroll periods…</div>
+          <section class="grid grid-2" style="margin-top: 1rem">
+            <article class="card">
+              <div class="card-header">
+                <h2>Latest payroll runs</h2>
+                <a class="btn ghost btn-sm" href="/payroll">Manage</a>
+              </div>
+              <div id="payroll-runs" class="loading">Loading payroll periods…</div>
+            </article>
+
+            <article class="card">
+              <div class="card-header">
+                <h2>Recent payslips</h2>
+                <span class="badge info" id="payslip-period-badge">—</span>
+              </div>
+              <div id="recent-payslips" class="loading">Loading payslips…</div>
+            </article>
           </section>
         </main>
       </div>

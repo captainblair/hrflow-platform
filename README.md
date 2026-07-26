@@ -22,13 +22,14 @@ Currently under active development as part of a Software Engineering practical a
 - Payslip generation and payroll periods
 - Backend tests for core leave and payroll logic
 - Frontend shell (pages, shared styles, API client)
+- Dashboard API and live dashboard UI
 
 **Defined**
 - Project architecture
 - Core business workflows
 
 **Upcoming**
-- Dashboard, employee, leave, and payroll UI
+- Employee, leave, and payroll UI
 - Docker setup
 
 ## Tech Stack
@@ -267,7 +268,7 @@ Base path: `/api`
 - `GET /api/payroll/payslips/<id>`
 
 **Dashboard**
-- `GET /api/dashboard`
+- `GET /api/dashboard` — pending approvals, who’s out, balances, payroll snapshot
 
 ## Tests
 

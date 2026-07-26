@@ -37,6 +37,7 @@ def serialize_leave_request(leave):
 def serialize_leave_balance(balance):
     return {
         "employee_id": balance.employee_id,
+        "employee_name": balance.employee.name if balance.employee else None,
         "year": balance.year,
         "annual_allocated": balance.annual_allocated,
         "annual_used": balance.annual_used,

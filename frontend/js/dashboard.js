@@ -1,27 +1,9 @@
-function todayISO() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function addDaysISO(days) {
-  const date = new Date();
-  date.setDate(date.getDate() + days);
-  return date.toISOString().slice(0, 10);
-}
-
-function coversDate(leave, day) {
-  return leave.start_date <= day && leave.end_date >= day;
-}
-
-function renderRecentLeave(items) {
-  const root = document.getElementById("recent-leave");
+function renderLeaveList(items, emptyTitle, emptyBody) {
   if (!items.length) {
-    root.innerHTML =
-      '<div class="empty"><strong>No leave requests yet</strong>New requests will show up here.</div>';
-    return;
+    return `<div class="empty"><strong>${emptyTitle}</strong>${emptyBody}</div>`;
   }
 
-  root.innerHTML = items
-    .slice(0, 6)
+  return items
     .map(
       (item) => `
       <div class="list-item">
@@ -29,7 +11,10 @@ function renderRecentLeave(items) {
           <div class="title">${item.employee_name}</div>
           <div class="meta">${item.leave_type} · ${formatDate(item.start_date)} → ${formatDate(item.end_date)}</div>
         </div>
-        ${statusBadge(item.status)}${item.is_overdue ? ' <span class="badge warning">Overdue</span>' : ""}
+        <div>
+          ${statusBadge(item.status)}
+          ${item.is_overdue ? '<span class="badge warning">Overdue</span>' : ""}
+        </div>
       </div>`
     )
     .join("");
@@ -37,26 +22,15 @@ function renderRecentLeave(items) {
 
 function renderUpcoming(items) {
   const root = document.getElementById("upcoming-leave");
-  const start = todayISO();
-  const end = addDaysISO(14);
-  const upcoming = items
-    .filter(
-      (item) =>
-        item.status === "approved" &&
-        item.end_date >= start &&
-        item.start_date <= end
-    )
-    .sort((a, b) => a.start_date.localeCompare(b.start_date));
-
-  if (!upcoming.length) {
+  if (!items.length) {
+    root.className = "";
     root.innerHTML =
       '<div class="empty"><strong>No upcoming leave</strong>Approved leave in the next two weeks will appear here.</div>';
     return;
   }
 
   root.className = "calendar-list";
-  root.innerHTML = upcoming
-    .slice(0, 6)
+  root.innerHTML = items
     .map((item) => {
       const label = formatDate(item.start_date).slice(5).replace("-", "/");
       return `
@@ -69,6 +43,42 @@ function renderUpcoming(items) {
         </div>`;
     })
     .join("");
+}
+
+function renderBalances(items, year) {
+  const root = document.getElementById("leave-balances");
+  document.getElementById("balance-year").textContent = String(year);
+
+  if (!items.length) {
+    root.innerHTML =
+      '<div class="empty"><strong>No balances</strong>Balances appear once employees are seeded.</div>';
+    return;
+  }
+
+  root.innerHTML = `
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr>
+            <th>Employee</th>
+            <th>Used</th>
+            <th>Remaining</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${items
+            .map(
+              (item) => `
+            <tr>
+              <td>${item.employee_name || "Employee #" + item.employee_id}</td>
+              <td>${item.annual_used}/${item.annual_allocated}</td>
+              <td><strong>${item.annual_remaining}</strong></td>
+            </tr>`
+            )
+            .join("")}
+        </tbody>
+      </table>
+    </div>`;
 }
 
 function renderPayrollRuns(periods) {
@@ -87,19 +97,53 @@ function renderPayrollRuns(periods) {
             <th>Period</th>
             <th>Status</th>
             <th>Payslips</th>
-            <th>Created</th>
           </tr>
         </thead>
         <tbody>
           ${periods
-            .slice(0, 5)
             .map(
               (period) => `
             <tr>
               <td>${period.year}-${String(period.month).padStart(2, "0")}</td>
               <td>${statusBadge(period.status)}</td>
               <td>${period.payslip_count}</td>
-              <td class="muted">${formatDate(period.created_at)}</td>
+            </tr>`
+            )
+            .join("")}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function renderPayslips(payslips, latestPeriod) {
+  const root = document.getElementById("recent-payslips");
+  const badge = document.getElementById("payslip-period-badge");
+  badge.textContent = latestPeriod || "No period";
+
+  if (!payslips.length) {
+    root.innerHTML =
+      '<div class="empty"><strong>No payslips</strong>Generate payroll to see slips here.</div>';
+    return;
+  }
+
+  root.innerHTML = `
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr>
+            <th>Employee</th>
+            <th>Gross</th>
+            <th>Net</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${payslips
+            .map(
+              (item) => `
+            <tr>
+              <td>${item.employee_name}</td>
+              <td>${formatMoney(item.gross_pay)}</td>
+              <td><strong>${formatMoney(item.net_pay)}</strong></td>
             </tr>`
             )
             .join("")}
@@ -112,41 +156,51 @@ async function loadDashboard() {
   const errorBox = document.getElementById("dashboard-error");
 
   try {
-    const [employees, leave, periods] = await Promise.all([
-      Api.get("/api/employees"),
-      Api.get("/api/leave"),
-      Api.get("/api/payroll/periods"),
-    ]);
+    const data = await Api.get("/api/dashboard");
+    const summary = data.summary;
 
-    const active = employees.filter((item) => item.is_active);
-    const pending = leave.filter((item) => item.status === "pending");
-    const overdue = pending.filter((item) => item.is_overdue);
-    const today = todayISO();
-    const outToday = new Set(
-      leave
-        .filter((item) => item.status === "approved" && coversDate(item, today))
-        .map((item) => item.employee_id)
+    document.getElementById("kpi-employees").textContent = String(
+      summary.total_employees
+    );
+    document.getElementById("kpi-employees-meta").textContent =
+      `${summary.active_employees} active · ${summary.inactive_employees} inactive`;
+
+    document.getElementById("kpi-out").textContent = String(
+      summary.employees_on_leave_today
     );
 
-    document.getElementById("kpi-employees").textContent = String(employees.length);
-    document.getElementById("kpi-employees-meta").textContent =
-      `${active.length} active · ${employees.length - active.length} inactive`;
-
-    document.getElementById("kpi-out").textContent = String(outToday.size);
-
-    document.getElementById("kpi-pending").textContent = String(pending.length);
+    document.getElementById("kpi-pending").textContent = String(
+      summary.pending_leave_requests
+    );
     document.getElementById("kpi-pending-meta").textContent =
-      overdue.length ? `${overdue.length} overdue` : "No overdue requests";
+      summary.overdue_leave_requests
+        ? `${summary.overdue_leave_requests} overdue`
+        : "No overdue requests";
 
-    document.getElementById("kpi-payroll").textContent = String(periods.length);
-    const latest = periods[0];
-    document.getElementById("kpi-payroll-meta").textContent = latest
-      ? `Latest ${latest.year}-${String(latest.month).padStart(2, "0")} · ${latest.payslip_count} slips`
+    document.getElementById("kpi-payroll").textContent = String(
+      summary.payroll_periods
+    );
+    document.getElementById("kpi-payroll-meta").textContent = summary.latest_period
+      ? `Latest ${summary.latest_period} · ${summary.latest_payslip_count} slips`
       : "No periods generated";
 
-    renderRecentLeave(leave);
-    renderUpcoming(leave);
-    renderPayrollRuns(periods);
+    document.getElementById("out-today-badge").textContent = data.as_of;
+
+    document.getElementById("pending-approvals").innerHTML = renderLeaveList(
+      data.pending_approvals,
+      "No pending approvals",
+      "New leave requests waiting on managers will show here."
+    );
+    document.getElementById("out-today").innerHTML = renderLeaveList(
+      data.out_today,
+      "Nobody out today",
+      "Approved leave covering today will list here."
+    );
+
+    renderBalances(data.leave_balances, data.as_of.slice(0, 4));
+    renderUpcoming(data.upcoming_leave);
+    renderPayrollRuns(data.payroll_periods);
+    renderPayslips(data.recent_payslips, summary.latest_period);
   } catch (error) {
     errorBox.hidden = false;
     errorBox.textContent = error.message || "Could not load dashboard data.";
