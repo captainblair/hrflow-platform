@@ -2,8 +2,12 @@ function markActiveNav() {
   const path = window.location.pathname.replace(/\/$/, "") || "/";
   document.querySelectorAll(".nav a[href]").forEach((link) => {
     const href = link.getAttribute("href");
-    if (href === path) {
-      link.classList.add("active");
+    const isActive = href === path;
+    link.classList.toggle("active", isActive);
+    if (isActive) {
+      link.setAttribute("aria-current", "page");
+    } else {
+      link.removeAttribute("aria-current");
     }
   });
 }

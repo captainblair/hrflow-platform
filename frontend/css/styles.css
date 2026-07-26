@@ -45,11 +45,24 @@ a {
   text-decoration: none;
 }
 
+a.btn {
+  text-decoration: none;
+}
+
 button,
 input,
 select,
 textarea {
   font: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #93c5fd;
+  outline-offset: 2px;
 }
 
 button {
@@ -394,6 +407,10 @@ button {
 .kpi-meta {
   font-size: 0.8rem;
   color: var(--muted);
+}
+
+.page-stack {
+  margin-top: 1rem;
 }
 
 /* ---------- Buttons ---------- */

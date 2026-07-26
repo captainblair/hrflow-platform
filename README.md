@@ -27,14 +27,16 @@ Currently under active development as part of a Software Engineering practical a
 - Leave workflow UI (request, approve/reject, overdue filters)
 - Payroll UI (generate, payslips, finalize)
 - Frontend loading, empty, and error-state polish
+- Mobile-responsive layout
+- Final UI polish and screenshot placeholders
 
 **Defined**
 - Project architecture
 - Core business workflows
 
 **Upcoming**
-- Final UI polish / screenshots
 - Docker setup
+- Sample database SQL dump
 
 ## Tech Stack
 
@@ -243,7 +245,7 @@ The API health check is available at `http://127.0.0.1:5000/api/health`.
 ### Docker
 Docker support is planned for a later phase.
 
-## Planned API Structure
+## API endpoints
 
 Base path: `/api`
 
@@ -299,7 +301,30 @@ The final submission includes a SQL dump under `database/hrflow_sample.sql` with
 
 ## Screenshots
 
-Screenshots of the dashboard, leave workflow, and payroll views will be added here once the frontend is in place.
+Capture these while the seeded app is running at `http://127.0.0.1:5000/`, then save the files under `docs/screenshots/` using the names below. See `docs/screenshots/README.md` for framing tips.
+
+| File | View |
+|---|---|
+| `dashboard.png` | Dashboard KPIs and panels |
+| `employees.png` | Employee form, org structure, directory |
+| `leave.png` | Leave request form and approval queue |
+| `payroll.png` | Payroll generate, periods, and payslips |
+
+### Dashboard
+
+![Dashboard](docs/screenshots/dashboard.png)
+
+### Employees
+
+![Employees](docs/screenshots/employees.png)
+
+### Leave
+
+![Leave](docs/screenshots/leave.png)
+
+### Payroll
+
+![Payroll](docs/screenshots/payroll.png)
 
 ## Later improvements
 
