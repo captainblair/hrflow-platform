@@ -95,27 +95,71 @@ Rules:
 ## Architecture
 
 ```
-Browser (HTML, CSS, Vanilla JS)
-              |
-              | REST / JSON
-              v
-Flask API
-(routes/controllers)
-              |
-              v
-Business Services
-(leave rules + payroll calculations)
-              |
-              v
-PostgreSQL
-(SQLAlchemy + Flask-Migrate)
+┌────────────────────────────┐
+│     HTML / CSS / JS UI     │
+│         (frontend/)        │
+└─────────────┬──────────────┘
+              │ REST / JSON
+              ▼
+┌────────────────────────────┐
+│     Flask route layer      │
+│   pages + /api blueprints  │
+└─────────────┬──────────────┘
+              ▼
+┌────────────────────────────┐
+│  Business logic / services │
+│ Leave • Payroll • Employee │
+└─────────────┬──────────────┘
+              ▼
+┌────────────────────────────┐
+│      SQLAlchemy ORM        │
+└─────────────┬──────────────┘
+              ▼
+┌────────────────────────────┐
+│    PostgreSQL database     │
+└────────────────────────────┘
 ```
 
-Route handlers stay thin. Leave rules and payroll calculations live in a service layer so the important logic is easy to test.
+Route handlers stay thin. Leave rules and payroll calculations live in a service layer so the important logic is easy to test. The UI is plain HTML/CSS/JS in `frontend/` (no React or Vue), served by Flask page routes alongside the JSON API.
 
-Frontend is plain HTML/CSS/JS — no React or Vue.
+## Project structure
 
-Docker is optional. Local run with a virtualenv and PostgreSQL is the default path; `docker compose up --build` is the one-command alternative.
+```
+hrflow-platform/
+├── app/
+│   ├── models/          # Employee, leave, payroll tables
+│   ├── routes/          # HTTP blueprints (API + pages)
+│   ├── services/        # Business rules and payroll math
+│   ├── utils/           # Shared helpers (API errors)
+│   ├── config.py
+│   ├── extensions.py    # SQLAlchemy + Migrate
+│   ├── schemas.py       # Response shaping
+│   └── seed.py          # Demo data CLI command
+├── frontend/            # HTML, CSS, vanilla JS
+│   ├── css/
+│   └── js/
+├── migrations/          # Alembic schema history
+├── tests/               # Pytest suite for leave + payroll
+├── database/            # SQL dump (schema + sample data)
+├── docs/screenshots/    # README UI captures
+├── docker-compose.yml
+├── Dockerfile
+├── docker-entrypoint.sh
+├── requirements.txt
+├── requirements-dev.txt
+├── run.py
+└── README.md
+```
+
+## Key design decisions
+
+- Kept a **service layer** so leave rules and payroll math are testable without going through HTTP.
+- Used **soft deactivation** (`is_active`) instead of deleting employees so leave and payslip history stay intact.
+- Chose **PostgreSQL** for relational integrity (org hierarchy, leave, payroll periods) and a production-like setup.
+- Chose **Flask** for a small, explicit structure that matches the assessment stack without extra framework weight.
+- Put the UI in **`frontend/`** rather than Jinja templates so the API and browser client stay clearly separated.
+- Made **Docker Compose** optional so the default path stays venv + local Postgres, with a one-command alternative for setup.
+- Left **auth out of scope** on purpose so the demo can show the full leave → approval → payroll flow in one UI (documented under Access model).
 
 ## Access model
 
