@@ -1,0 +1,21 @@
+# Build context junk — keep the image small and free of local secrets.
+.venv/
+venv/
+.git/
+.gitignore
+__pycache__/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+.env
+.idea/
+.vscode/
+instance/
+*.docx
+HRFlow Technical Interview Preparation.docx
+docs/screenshots/*.png
+_regen_payroll.py
+_payroll_walkthrough.py
+_gen_interview_doc.py

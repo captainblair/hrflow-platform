@@ -14,3 +14,7 @@ htmlcov/
 .vscode/
 
 instance/
+
+# Local interview prep — never commit
+HRFlow Technical Interview Preparation.docx
+*Interview Preparation.docx

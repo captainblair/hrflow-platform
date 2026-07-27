@@ -29,14 +29,15 @@ Currently under active development as part of a Software Engineering practical a
 - Frontend loading, empty, and error-state polish
 - Mobile-responsive layout
 - Final UI polish and screenshot placeholders
+- Docker Compose setup (app + PostgreSQL)
 
 **Defined**
 - Project architecture
 - Core business workflows
 
 **Upcoming**
-- Docker setup
 - Sample database SQL dump
+- Optional cloud hosting (e.g. PythonAnywhere)
 
 ## Tech Stack
 
@@ -121,7 +122,7 @@ Route handlers stay thin. Leave rules and payroll calculations live in a service
 
 Frontend is plain HTML/CSS/JS — no React or Vue.
 
-Docker is optional. Local run with a virtualenv and PostgreSQL is the default path.
+Docker is optional. Local run with a virtualenv and PostgreSQL is the default path; `docker compose up --build` is the one-command alternative.
 
 ## Access model
 
@@ -243,7 +244,39 @@ The app UI is available at `http://127.0.0.1:5000/`.
 The API health check is available at `http://127.0.0.1:5000/api/health`.
 
 ### Docker
-Docker support is planned for a later phase.
+
+Requires Docker Desktop (or another Docker Engine) with Compose.
+
+From the project root:
+
+```bash
+docker compose up --build
+```
+
+On first start the `web` container waits for Postgres, runs `flask db upgrade`, runs `flask seed` (skipped if data already exists), then serves the app.
+
+- UI: `http://127.0.0.1:5000/`
+- Health: `http://127.0.0.1:5000/api/health`
+
+Stop with `Ctrl+C`, or in another terminal:
+
+```bash
+docker compose down
+```
+
+Postgres data is kept in the `hrflow_pgdata` volume. To wipe the database and reseed:
+
+```bash
+docker compose down -v
+docker compose up --build
+```
+
+Compose uses these defaults for the container network (not your local `.env`):
+
+- User / password / database: `hrflow` / `hrflow` / `hrflow`
+- App `DATABASE_URL`: `postgresql+psycopg://hrflow:hrflow@db:5432/hrflow`
+
+Manual venv + local PostgreSQL remains the default development path; Docker is the optional one-command alternative.
 
 ## API endpoints
 

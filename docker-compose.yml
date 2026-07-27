@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: hrflow
+      POSTGRES_PASSWORD: hrflow
+      POSTGRES_DB: hrflow
+    volumes:
+      - hrflow_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hrflow -d hrflow"]
+      interval: 3s
+      timeout: 5s
+      retries: 15
+
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_APP: run.py
+      FLASK_DEBUG: "1"
+      SECRET_KEY: docker-dev-secret-change-me
+      # Host name `db` is the Compose service name on the Docker network.
+      DATABASE_URL: postgresql+psycopg://hrflow:hrflow@db:5432/hrflow
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  hrflow_pgdata:
