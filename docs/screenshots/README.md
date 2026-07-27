@@ -1,6 +1,6 @@
 # Screenshots
 
-These images are embedded from the main project README.
+UI captures used in the project README.
 
 | File | View |
 |---|---|

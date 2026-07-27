@@ -6,7 +6,7 @@ Teams often handle this over spreadsheets and chat. Requests get lost, coverage 
 
 ## Project Status
 
-Currently under active development as part of a Software Engineering practical assessment.
+Built as a Software Engineering practical assessment. Core employee, leave, and payroll workflows are implemented and covered by tests.
 
 **Implemented**
 - Flask application factory
@@ -31,13 +31,6 @@ Currently under active development as part of a Software Engineering practical a
 - Final UI polish and README screenshots
 - Docker Compose setup (app + PostgreSQL)
 - Sample database SQL dump (`database/hrflow_sample.sql`)
-
-**Defined**
-- Project architecture
-- Core business workflows
-
-**Upcoming**
-- Optional cloud hosting (e.g. PythonAnywhere)
 
 ## Tech Stack
 
@@ -330,27 +323,26 @@ The current suite contains 25 tests covering:
 
 ## Sample data
 
-`database/hrflow_sample.sql` is a PostgreSQL dump of a demo database. It includes:
+`database/hrflow_sample.sql` is a PostgreSQL dump (schema + sample data) included with the project. It contains:
 
 - 7 employees with manager relationships
 - Leave balances for the current year
 - Leave requests in mixed statuses (pending, overdue pending, approved sick, approved unpaid)
 - Payroll periods: `2026-02` (finalized) and `2026-07` (draft) with payslips
 
-**How a reviewer (or you) can load it into an empty database:**
+Restore into an empty database:
 
 ```bash
-# create an empty database first, then:
 psql -U postgres -d hrflow -f database/hrflow_sample.sql
 ```
 
-On Windows, if `psql` is on your PATH:
+Windows (PowerShell), if `psql` is available:
 
 ```powershell
 psql -U postgres -d hrflow -f database/hrflow_sample.sql
 ```
 
-Day-to-day development can keep using `flask seed` instead. The SQL file is mainly for submission and for anyone who wants a ready-made snapshot without clicking through the UI.
+Local development can also use `flask seed` after migrations for a comparable starter dataset.
 
 ## Screenshots
 
@@ -372,6 +364,8 @@ Day-to-day development can keep using `flask seed` instead. The SQL file is main
 
 ## Later improvements
 
+Given more time, the next upgrades would be:
+
 - Authentication and role-based permissions (see Access model above)
 - Notifications for overdue leave requests
 - Proper accrual and carry-over for annual leave
@@ -380,5 +374,3 @@ Day-to-day development can keep using `flask seed` instead. The SQL file is main
 - Team leave calendar
 - CI/CD pipeline integration
 - Cloud deployment configuration
-
-Stretch work only after the core modules are solid. Extra quality-of-life features (for example clearer overdue indicators) will be listed here if added.
