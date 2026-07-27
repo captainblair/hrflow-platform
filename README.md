@@ -30,13 +30,13 @@ Currently under active development as part of a Software Engineering practical a
 - Mobile-responsive layout
 - Final UI polish and screenshot placeholders
 - Docker Compose setup (app + PostgreSQL)
+- Sample database SQL dump (`database/hrflow_sample.sql`)
 
 **Defined**
 - Project architecture
 - Core business workflows
 
 **Upcoming**
-- Sample database SQL dump
 - Optional cloud hosting (e.g. PythonAnywhere)
 
 ## Tech Stack
@@ -330,7 +330,27 @@ The current suite contains 25 tests covering:
 
 ## Sample data
 
-The final submission includes a SQL dump under `database/hrflow_sample.sql` with a few employees, leave requests in different statuses, and one generated payroll period.
+`database/hrflow_sample.sql` is a PostgreSQL dump of a demo database. It includes:
+
+- 7 employees with manager relationships
+- Leave balances for the current year
+- Leave requests in mixed statuses (pending, overdue pending, approved sick, approved unpaid)
+- Payroll periods: `2026-02` (finalized) and `2026-07` (draft) with payslips
+
+**How a reviewer (or you) can load it into an empty database:**
+
+```bash
+# create an empty database first, then:
+psql -U postgres -d hrflow -f database/hrflow_sample.sql
+```
+
+On Windows, if `psql` is on your PATH:
+
+```powershell
+psql -U postgres -d hrflow -f database/hrflow_sample.sql
+```
+
+Day-to-day development can keep using `flask seed` instead. The SQL file is mainly for submission and for anyone who wants a ready-made snapshot without clicking through the UI.
 
 ## Screenshots
 
