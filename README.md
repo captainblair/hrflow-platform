@@ -31,6 +31,7 @@ Built as a Software Engineering practical assessment. Core employee, leave, and 
 - Final UI polish and README screenshots
 - Docker Compose setup (app + PostgreSQL)
 - Sample database SQL dump (`database/hrflow_sample.sql`)
+- CSV export for payroll periods
 
 ## Tech Stack
 
@@ -91,6 +92,7 @@ Rules:
 - Gross pay prorated for mid-month starters and unpaid leave
 - Flat social security plus bracketed income tax
 - Net pay stored with the calculation breakdown
+- Export a period’s payslips as CSV for spreadsheet review
 
 ## Architecture
 
@@ -160,6 +162,7 @@ hrflow-platform/
 - Put the UI in **`frontend/`** rather than Jinja templates so the API and browser client stay clearly separated.
 - Made **Docker Compose** optional so the default path stays venv + local Postgres, with a one-command alternative for setup.
 - Left **auth out of scope** on purpose so the demo can show the full leave → approval → payroll flow in one UI (documented under Access model).
+- Added a **CSV export** for payroll periods so a month’s payslips can be opened in Excel or Google Sheets without changing the core calculation engine.
 
 ## Access model
 
@@ -340,6 +343,7 @@ Base path: `/api`
 - `POST /api/payroll/generate` — create/regenerate draft period + payslips
 - `GET /api/payroll/periods`
 - `GET /api/payroll/periods/<id>/payslips`
+- `GET /api/payroll/periods/<id>/export.csv` — download payslips as CSV
 - `POST /api/payroll/periods/<id>/finalize`
 - `GET /api/payroll/payslips/<id>`
 
@@ -405,6 +409,10 @@ Local development can also use `flask seed` after migrations for a comparable st
 ### Payroll
 
 ![Payroll](docs/screenshots/Payroll.png)
+
+## Stretch work
+
+Beyond the core brief, the Payroll page includes **Export CSV** for the selected period. That keeps the in-app review flow intact while making it easy to hand numbers to finance tools. PDF payslips and richer reporting were left for later so the export stayed small and reliable.
 
 ## Later improvements
 

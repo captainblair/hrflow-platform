@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, Response, jsonify, request
 
 from app.schemas import serialize_payroll_period, serialize_payslip
 from app.services import payroll_service
@@ -56,6 +56,19 @@ def list_periods():
 def period_payslips(period_id):
     payslips = payroll_service.list_payslips_for_period(period_id)
     return jsonify([serialize_payslip(item) for item in payslips])
+
+
+@payroll_bp.get("/periods/<int:period_id>/export.csv")
+def export_period_csv(period_id):
+    """Download payslips for a period as CSV (opens cleanly in Excel/Sheets)."""
+    csv_text, filename = payroll_service.build_period_csv(period_id)
+    return Response(
+        csv_text,
+        mimetype="text/csv",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+        },
+    )
 
 
 @payroll_bp.post("/periods/<int:period_id>/finalize")

@@ -22,6 +22,18 @@ function filteredPayslips() {
   );
 }
 
+function updateExportButton() {
+  const button = document.getElementById("export-csv-btn");
+  if (!button) return;
+  const canExport = Boolean(selectedPeriod && currentPayslips.length);
+  button.hidden = !canExport;
+}
+
+function exportPayslipsCsv() {
+  if (!selectedPeriod) return;
+  window.location.href = `/api/payroll/periods/${selectedPeriod.id}/export.csv`;
+}
+
 function renderPayslipTable() {
   const root = document.getElementById("payslip-table");
   const items = filteredPayslips();
@@ -32,6 +44,7 @@ function renderPayslipTable() {
       "No period selected",
       "Choose a payroll run to inspect payslips."
     );
+    updateExportButton();
     return;
   }
 
@@ -41,6 +54,7 @@ function renderPayslipTable() {
       "No matching payslips",
       "Try a different name filter."
     );
+    updateExportButton();
     return;
   }
 
@@ -81,6 +95,7 @@ function renderPayslipTable() {
         </tbody>
       </table>
     </div>`;
+  updateExportButton();
 }
 
 async function loadPayslips(period) {
@@ -175,6 +190,7 @@ async function loadPayrollPage() {
       currentPayslips = [];
       document.getElementById("payslip-period-label").textContent = "Select a period";
       renderPayslipTable();
+      updateExportButton();
     }
   } catch (error) {
     periodsRoot.innerHTML = emptyState("Could not load periods", error.message);
@@ -229,4 +245,5 @@ document.addEventListener("DOMContentLoaded", () => {
   loadPayrollPage();
   document.getElementById("generate-form").addEventListener("submit", generatePayroll);
   document.getElementById("payslip-search").addEventListener("input", renderPayslipTable);
+  document.getElementById("export-csv-btn").addEventListener("click", exportPayslipsCsv);
 });

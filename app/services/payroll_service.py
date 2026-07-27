@@ -1,3 +1,5 @@
+import csv
+import io
 from decimal import Decimal
 
 from app.extensions import db
@@ -143,3 +145,51 @@ def get_payslip(payslip_id):
     if payslip is None:
         raise ApiError("Payslip not found", status_code=404)
     return payslip
+
+
+def build_period_csv(period_id):
+    """Build a CSV string for all payslips in a period."""
+    period = get_period(period_id)
+    payslips = list_payslips_for_period(period_id)
+
+    buffer = io.StringIO()
+    writer = csv.writer(buffer)
+    writer.writerow(
+        [
+            "employee_name",
+            "gross_pay",
+            "social_security",
+            "income_tax",
+            "net_pay",
+            "employed_days",
+            "unpaid_leave_days",
+            "eligible_days",
+            "days_in_month",
+            "period_year",
+            "period_month",
+            "period_status",
+        ]
+    )
+
+    for slip in payslips:
+        details = slip.details or {}
+        name = slip.employee.name if slip.employee else f"Employee #{slip.employee_id}"
+        writer.writerow(
+            [
+                name,
+                float(slip.gross_pay),
+                float(slip.social_security),
+                float(slip.income_tax),
+                float(slip.net_pay),
+                details.get("employed_days", ""),
+                details.get("unpaid_leave_days", ""),
+                details.get("eligible_days", ""),
+                details.get("days_in_month", ""),
+                period.year,
+                period.month,
+                period.status,
+            ]
+        )
+
+    filename = f"payslips-{period.year}-{period.month:02d}.csv"
+    return buffer.getvalue(), filename

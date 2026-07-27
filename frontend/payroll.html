@@ -89,7 +89,17 @@
           <section class="card page-stack">
             <div class="card-header">
               <h2>Payslips</h2>
-              <span class="badge info" id="payslip-period-label">Select a period</span>
+              <div>
+                <span class="badge info" id="payslip-period-label">Select a period</span>
+                <button
+                  class="btn secondary btn-sm"
+                  type="button"
+                  id="export-csv-btn"
+                  hidden
+                >
+                  Export CSV
+                </button>
+              </div>
             </div>
             <div id="payslip-table" class="empty">
               <strong>No period selected</strong>
