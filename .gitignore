@@ -15,6 +15,7 @@ htmlcov/
 
 instance/
 
-# Local interview prep — never commit
-HRFlow Technical Interview Preparation.docx
-*Interview Preparation.docx
+# Local notes - never commit
+myfile.docx
+~$*.docx
+*.docx
