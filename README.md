@@ -28,7 +28,7 @@ Currently under active development as part of a Software Engineering practical a
 - Payroll UI (generate, payslips, finalize)
 - Frontend loading, empty, and error-state polish
 - Mobile-responsive layout
-- Final UI polish and screenshot placeholders
+- Final UI polish and README screenshots
 - Docker Compose setup (app + PostgreSQL)
 - Sample database SQL dump (`database/hrflow_sample.sql`)
 
@@ -354,30 +354,21 @@ Day-to-day development can keep using `flask seed` instead. The SQL file is main
 
 ## Screenshots
 
-Capture these while the seeded app is running at `http://127.0.0.1:5000/`, then save the files under `docs/screenshots/` using the names below. See `docs/screenshots/README.md` for framing tips.
-
-| File | View |
-|---|---|
-| `dashboard.png` | Dashboard KPIs and panels |
-| `employees.png` | Employee form, org structure, directory |
-| `leave.png` | Leave request form and approval queue |
-| `payroll.png` | Payroll generate, periods, and payslips |
-
 ### Dashboard
 
-![Dashboard](docs/screenshots/dashboard.png)
+![Dashboard](docs/screenshots/Dashboard.png)
 
 ### Employees
 
-![Employees](docs/screenshots/employees.png)
+![Employees](docs/screenshots/Employees.png)
 
 ### Leave
 
-![Leave](docs/screenshots/leave.png)
+![Leave](docs/screenshots/Leave.png)
 
 ### Payroll
 
-![Payroll](docs/screenshots/payroll.png)
+![Payroll](docs/screenshots/Payroll.png)
 
 ## Later improvements
 
